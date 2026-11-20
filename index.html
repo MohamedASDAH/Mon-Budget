@@ -575,6 +575,25 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
 :root[data-theme="light"] hr{border-color:#dce2ed}
 :root[data-theme="light"] .toast{color:#17213a!important;background:#fff!important;border:1px solid #d5dbea!important}
 </style>
+
+<style id="light-mode-readable-everywhere">
+:root[data-theme="light"]{--tx:#15213b!important;--mu:#4b5a75!important;--bd:#cbd5e5!important}
+:root[data-theme="light"] #pg{color:#15213b!important}
+:root[data-theme="light"] #pg :is(p,span,label,small,b,strong,h1,h2,h3,h4,h5,li,td,th,a,button){color:#15213b!important;text-shadow:none!important}
+:root[data-theme="light"] #pg :is(.mu,.muted,.hint,.sub,.desc,.gt,.sidebar-tagline,small){color:#4b5a75!important;opacity:1!important}
+:root[data-theme="light"] #pg :is(.pos,.positive,.success,.green){color:#087647!important}
+:root[data-theme="light"] #pg :is(.neg,.negative,.danger,.red){color:#b42332!important}
+:root[data-theme="light"] #pg :is(.hero,.hero *, .aic,.aic *){color:#fff!important}
+:root[data-theme="light"] #pg button:not(.p):not(.primary):not(.auth-submit){color:#263451!important}
+:root[data-theme="light"] #pg input,:root[data-theme="light"] #pg select,:root[data-theme="light"] #pg textarea{background:#fff!important;color:#15213b!important;border-color:#c4cede!important}
+:root[data-theme="light"] #pg input::placeholder,:root[data-theme="light"] #pg textarea::placeholder{color:#687791!important;opacity:1!important}
+:root[data-theme="light"] #sb,:root[data-theme="light"] #bn{color:#263451!important}
+:root[data-theme="light"] #sb :is(span,b,small,button){color:#263451!important}
+:root[data-theme="light"] #sb .ni.on,:root[data-theme="light"] #sb .ni.on *{color:#5036b4!important}
+:root[data-theme="light"] #bn button{color:#465571!important}
+:root[data-theme="light"] #bn button.on{color:#5036b4!important;background:#e9e4ff!important}
+:root[data-theme="light"] #wallpaper{opacity:var(--wall-opacity,.48)}
+</style>
 </head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
@@ -693,12 +712,12 @@ if(!TH)TH=typeof matchMedia==='function'&&matchMedia('(prefers-color-scheme: lig
 function applyTh(){document.documentElement.dataset.theme=TH;const b=$('thh');if(b)b.innerHTML=ic(TH==='dark'?'sun':'moon',18);wallApply()}
 function toggleTheme(){TH=TH==='dark'?'light':'dark';try{localStorage.setItem('budget_theme',TH)}catch(e){}go();toast(TH==='dark'?'🌙 Mode nuit':'☀️ Mode jour')}
 const WALL_KEY='mon_budget_wallpaper_v1',WALL_NAME_KEY='mon_budget_wallpaper_name_v1',WALL_OP_KEY='mon_budget_wallpaper_opacity_v1';
-let WALL_REMOTE_STATUS='Fond synchronisé avec ton compte',wallSyncTimer=null;
+let WALL_REMOTE_STATUS='Fond synchronisé avec ton compte',wallSyncTimer=null,WALL_REMOTE_DATA='';
 function wallFileName(){try{return esc(localStorage.getItem(WALL_NAME_KEY)||'Aucun fond d’écran sélectionné')}catch(e){return'Aucun fond d’écran sélectionné'}}
 function wallOpacityVal(){try{return localStorage.getItem(WALL_OP_KEY)||'48'}catch(e){return'48'}}
 function wallLocalData(){try{return localStorage.getItem(WALL_KEY)||''}catch(e){return''}}
 function wallApply(){
- const img=wallLocalData(),op=wallOpacityVal();
+ const img=wallLocalData()||WALL_REMOTE_DATA,op=wallOpacityVal();
  document.documentElement.style.setProperty('--wall-opacity',String(Math.max(15,Math.min(72,+op||48))/100));
  const el=$('wallpaper');if(el){el.style.display=img?'block':'none';if(img){const overlay=TH==='light'?'linear-gradient(rgba(239,242,250,.36),rgba(239,242,250,.56))':'linear-gradient(rgba(4,8,22,.43),rgba(4,8,22,.62))';el.style.backgroundImage=overlay+',url("'+img+'")'}else el.style.backgroundImage='none'}
  const name=$('wallName');if(name)name.textContent=wallFileName().replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&quot;/g,'"');
@@ -728,10 +747,10 @@ async function wallLoadSync(){
   if(error)throw error;
   if(data){
    if(data.wallpaper_data){
-    localStorage.setItem(WALL_KEY,data.wallpaper_data);
-    if(data.wallpaper_name)localStorage.setItem(WALL_NAME_KEY,data.wallpaper_name);
-    else localStorage.removeItem(WALL_NAME_KEY);
+    WALL_REMOTE_DATA=data.wallpaper_data;
+    try{localStorage.setItem(WALL_KEY,data.wallpaper_data);if(data.wallpaper_name)localStorage.setItem(WALL_NAME_KEY,data.wallpaper_name);else localStorage.removeItem(WALL_NAME_KEY)}catch(storageError){console.warn('Fond chargé sans cache local:',storageError)}
    }else{
+    WALL_REMOTE_DATA='';
     localStorage.removeItem(WALL_KEY);localStorage.removeItem(WALL_NAME_KEY);
    }
    localStorage.setItem(WALL_OP_KEY,String(data.wallpaper_opacity||48));
@@ -739,6 +758,7 @@ async function wallLoadSync(){
   }else{
    const local=wallLocalData();
    if(local){
+    WALL_REMOTE_DATA=local;
     const ok=await wallRemoteWrite(local,localStorage.getItem(WALL_NAME_KEY)||'',wallOpacityVal(),false);
     if(!ok)return;
    }else WALL_REMOTE_STATUS='Choisis une image pour la synchroniser sur tes appareils';
@@ -760,7 +780,7 @@ function wallOpacity(v){
  wallApply();wallQueueRemote();
 }
 async function wallRemove(){
- try{localStorage.removeItem(WALL_KEY);localStorage.removeItem(WALL_NAME_KEY)}catch(e){}
+ try{localStorage.removeItem(WALL_KEY);localStorage.removeItem(WALL_NAME_KEY)}catch(e){}WALL_REMOTE_DATA='';
  clearTimeout(wallSyncTimer);wallApply();
  if(UID)await wallRemoteWrite('', '',wallOpacityVal(),true);else toast('Fond d’écran retiré ✓');
 }
@@ -786,7 +806,7 @@ function wallUpload(input){
     if(!ok)max=Math.round(max*.82);
    }
    if(!ok){toast('Cette image est trop lourde, essaie une image plus légère');return}
-   try{localStorage.setItem(WALL_KEY,data);localStorage.setItem(WALL_NAME_KEY,file.name);if(!localStorage.getItem(WALL_OP_KEY))localStorage.setItem(WALL_OP_KEY,'48')}
+   try{localStorage.setItem(WALL_KEY,data);localStorage.setItem(WALL_NAME_KEY,file.name);if(!localStorage.getItem(WALL_OP_KEY))localStorage.setItem(WALL_OP_KEY,'48')}catch(e){WALL_REMOTE_DATA=data;try{localStorage.setItem(WALL_NAME_KEY,file.name)}catch(_){} }
    catch(e){toast('Espace de stockage insuffisant sur cet appareil');return}
    wallApply();
    if(UID)wallRemoteWrite(data,file.name,wallOpacityVal(),true);
