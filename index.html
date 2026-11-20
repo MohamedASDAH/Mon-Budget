@@ -376,6 +376,52 @@ main{z-index:2}
  .wall-status{align-items:flex-start}
 }
 @media(prefers-reduced-motion:reduce){#wallpaper{transition:none}}
+
+/* REFINED INTERACTIVE BALANCE CHART */
+.curve-wrap{position:relative;margin:2px -2px 0;padding:13px 12px 10px;border:1px solid rgba(170,190,240,.12);border-radius:19px;background:linear-gradient(145deg,rgba(5,12,29,.28),rgba(255,255,255,.025));overflow:hidden}
+.curve-wrap:before{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.22),transparent)}
+.curve-topline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 4px 2px}
+.curve-period{font-size:12px;text-transform:capitalize;color:var(--mu);font-weight:650;letter-spacing:.25px}
+.curve-status{display:inline-flex;align-items:center;gap:7px;padding:5px 9px;border-radius:99px;background:rgba(255,255,255,.055);border:1px solid var(--bd);font-size:11px;color:var(--tx);white-space:nowrap}
+.curve-status i{width:7px;height:7px;border-radius:50%;box-shadow:0 0 10px currentColor}
+.curve-svg{display:block;width:100%;height:auto;overflow:visible;margin:0;touch-action:pan-y;outline:none}
+.curve-svg:focus-visible{outline:2px solid var(--ac);outline-offset:3px;border-radius:12px}
+.curve-hit{cursor:crosshair}
+.curve-legend{display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;padding:4px 0 1px;color:var(--mu);font-size:11px}
+.curve-legend span{display:inline-flex;align-items:center;gap:7px}
+.curve-legend i{display:inline-block;width:18px;height:3px;border-radius:9px}
+.leg-real{background:linear-gradient(90deg,#8affeb,#35dfc4);box-shadow:0 0 8px #35dfc455}
+.leg-ideal{height:0!important;border-top:2px dashed var(--mu);opacity:.65}
+.leg-forecast{height:0!important;border-top:2px dotted #35dfc4;opacity:.85}
+.curve-tooltip{margin-top:10px;padding:12px 14px;border:1px solid rgba(135,190,210,.18);border-radius:15px;background:linear-gradient(110deg,rgba(45,212,191,.075),rgba(121,87,232,.10));min-height:72px}
+.curve-tip-date{font-size:12px;font-weight:700;color:var(--mu);text-transform:capitalize;margin-bottom:8px}
+.curve-tip-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.curve-tip-values>div{min-width:0}
+.curve-tip-values small{display:block;color:var(--mu);font-size:10px;margin-bottom:2px}
+.curve-tip-values b{display:block;font-size:14px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.curve-tip-events{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.curve-tip-events span{font-size:11px;padding:5px 8px;border-radius:8px;background:rgba(255,255,255,.055);color:var(--tx)}
+.curve-tip-empty{font-size:11px;color:var(--mu);margin-top:5px}
+.curve-stats{margin-bottom:12px}
+@keyframes curveDraw{to{stroke-dashoffset:0}}
+@keyframes curveFillIn{from{opacity:0}to{opacity:1}}
+#pg.ani .curve-line{stroke-dasharray:1;stroke-dashoffset:1;animation:curveDraw 1.35s cubic-bezier(.2,.8,.2,1) .08s forwards}
+#pg.ani .curve-fill{opacity:0;animation:curveFillIn .85s ease .28s forwards}
+#pg.ani #todayHalo{animation:curveHalo 2.6s ease-in-out infinite}
+@keyframes curveHalo{50%{opacity:.9;r:16}}
+:root[data-theme=light] .curve-wrap{background:linear-gradient(145deg,rgba(255,255,255,.5),rgba(235,240,255,.42));border-color:rgba(84,110,160,.16)}
+:root[data-theme=light] .curve-tooltip{background:linear-gradient(110deg,rgba(45,180,170,.09),rgba(121,87,232,.07));border-color:rgba(84,110,160,.16)}
+@media(max-width:860px){
+ .curve-wrap{margin:0 -2px;padding:10px 7px 9px;border-radius:16px}
+ .curve-topline{margin:0 4px 4px}
+ .curve-legend{gap:10px;font-size:10px}
+ .curve-tooltip{padding:10px 11px;margin-top:8px}
+ .curve-tip-values{gap:5px}
+ .curve-tip-values b{font-size:12px}
+ .curve-tip-events span{font-size:10px}
+}
+@media(max-width:360px){.curve-tip-values{grid-template-columns:1fr 1fr}.curve-tip-values>div:last-child{grid-column:1/-1}}
+@media(prefers-reduced-motion:reduce){#pg.ani .curve-line,#pg.ani .curve-fill,#pg.ani #todayHalo{animation:none;stroke-dasharray:none;stroke-dashoffset:0;opacity:1}}
 </style>
 </head>
 <body>
@@ -558,23 +604,78 @@ function donut(items,sz){const tot=sum(items,'v')||1;let a=0;const R=70,C=2*Math
  return`<svg viewBox="0 0 180 180" style="width:${sz}px;max-width:100%"><circle cx="90" cy="90" r="${R}" fill="none" stroke="var(--bd)" stroke-width="17"/>${seg}<text x="90" y="${s?82:88}" text-anchor="middle" font-size="${s?11:10}" fill="var(--mu)">${s?esc(s.l):'Total'}</text><text x="90" y="${s?102:106}" text-anchor="middle" font-size="${s?20:16}" font-weight="700" fill="var(--tx)">${s?Math.round(s.v/tot*100)+'%':eur(tot)}</text>${s?`<text x="90" y="118" text-anchor="middle" font-size="10" fill="var(--mu)">${eur(s.v)}</text>`:''}</svg>`}
 function legend(items){const tot=sum(items,'v')||1;return items.map((x,i)=>`<div class="lg ${U.sel===i?'on':''}" onclick="U.sel=${U.sel===i?-1:i};go()"><i style="background:${COL[i%8]}"></i><span>${esc(x.l)}</span><span class="mu">${Math.round(x.v/tot*100)}%</span><b>${eur(x.v)}</b></div>`).join('')}
 function ring(p,sz,c){const R=34,C=2*Math.PI*R,f=Math.min(1,Math.max(0,p))*C;return`<svg viewBox="0 0 80 80" style="width:${sz}px"><circle cx="40" cy="40" r="${R}" fill="none" stroke="var(--bd)" stroke-width="8"/><circle class="an" cx="40" cy="40" r="${R}" fill="none" stroke="${c||'#7957E8'}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${f} ${C}" transform="rotate(-90 40 40)"/><text x="40" y="45" text-anchor="middle" font-size="15" font-weight="700" fill="var(--tx)">${Math.round(p*100)}%</text></svg>`}
-function bal(big){const T=totals(),now=new Date(),y=now.getFullYear(),mo=now.getMonth(),D=new Date(y,mo+1,0).getDate(),td=now.getDate(),mn=now.toLocaleDateString('fr-FR',{month:'long'});
+function bal(big){
+ const T=totals(),now=new Date(),y=now.getFullYear(),mo=now.getMonth(),D=new Date(y,mo+1,0).getDate(),td=now.getDate(),mn=now.toLocaleDateString('fr-FR',{month:'long'});
  const start=S.solde+T.rev-T.ep-T.go,end=start-T.bud,per=Array(D+1).fill(0),ev=Array.from({length:D+1},()=>[]);
  for(const e of S.log){if(e.k==='rev')continue;const d=new Date(e.t),dy=d.getFullYear()===y&&d.getMonth()===mo?d.getDate():1;per[dy]+=e.amt;ev[dy].push(e)}
  const P=[{d:0,v:start}];let b=start;for(let d=1;d<=td;d++){b-=per[d];P.push({d,v:b})}
- const ideal=d=>start-T.bud*d/D,spent=start-b,proj=start-spent/td*D,all=[...P.map(p=>p.v),end,proj];let lo=Math.min(...all),hi=Math.max(...all);if(hi===lo){hi+=1;lo-=1}
- const pd=(hi-lo)*.12;lo-=pd;hi+=pd;const W=640,H=big?250:200,L=8,R=8,Tp=12,B=24,X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B,good=b>=ideal(td),col=good?'#2dd4bf':'#f0716f';
- const pts=P.map(p=>({x:X(p.d),y:Y(p.v)}));const line=pts.map((p,i)=>i===0?'M'+p.x.toFixed(1)+' '+p.y.toFixed(1):'Q'+pts[i-1].x.toFixed(1)+' '+pts[i-1].y.toFixed(1)+' '+((pts[i-1].x+p.x)/2).toFixed(1)+' '+((pts[i-1].y+p.y)/2).toFixed(1)).join(' ')+' T'+pts[pts.length-1].x.toFixed(1)+' '+pts[pts.length-1].y.toFixed(1);
- const xl=[1,5,10,15,20,25,D].map(d=>`<text x="${X(d)}" y="${H-7}" text-anchor="middle" font-size="11" fill="var(--mu)">${d}</text>`).join('');
- const dayLeft=D-td+1,html=`${big?`<div class="stat"><div><small>Solde actuel</small><b>${eur(b)}</b></div><div><small>Fin de mois (estimation)</small><b class="${cls(proj)}">${eur(proj)}</b></div><div><small>Dépense moyenne / jour</small><b>${eur(spent/td)}</b></div><div><small>Budget quotidien dispo</small><b>${eur(Math.max(0,T.rest)/dayLeft)}</b></div></div>`:''}
- <svg id="cs" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto;overflow:visible"><defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".36"/><stop offset=".62" stop-color="${col}" stop-opacity=".10"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient><filter id="curveGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
- <path d="${line} L${X(td)} ${bs} L${X(0)} ${bs}Z" fill="url(#gf)"/><line x1="${X(0)}" y1="${Y(start)}" x2="${X(D)}" y2="${Y(end)}" stroke="var(--mu)" stroke-dasharray="6 5" opacity=".7"/>
- <line x1="${X(td)}" y1="${Y(b)}" x2="${X(D)}" y2="${Y(proj)}" stroke="${col}" stroke-dasharray="2 5" stroke-width="2.5" stroke-linecap="round" opacity=".7"/><path d="${line}" fill="none" stroke="${col}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".22" filter="url(#curveGlow)"/><path d="${line}" fill="none" stroke="${col}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#curveGlow)"/>
- ${P.map(p=>`<circle cx="${X(p.d)}" cy="${Y(p.v)}" r="${p.d===td?5:per[p.d]?3.5:0}" fill="${col}" stroke="var(--cd)" stroke-width="2"/>`).join('')}<line id="hv" y1="${Tp}" y2="${bs}" stroke="var(--mu)" opacity="0"/>${xl}<rect width="${W}" height="${H}" fill="transparent"/></svg>
- <div class="mu" style="font-size:12px">Ligne pleine : réel · tirets : rythme idéal (budgets) · pointillés : <b>estimation</b> si tu gardes ton rythme.</div><div id="ci${big?'':'x'}"></div>`;
- AF.push(()=>{const ci=$(big?'ci':'cix'),sv=$('cs');const show=d=>{const p=P[d],i=p.v-ideal(d);ci.innerHTML=`<b>${d?d+' '+mn:'Début de mois'}</b> · Solde <b>${eur(p.v)}</b> · Idéal ${eur(ideal(d))} · <span class="pill ${cls(i)}">${i>=0?'+':''}${eur(i)}</span>`+ev[d].map(e=>`<div class="mu">• ${esc(e.desc||e.label)} : ${eur(e.amt)}</div>`).join('');const h=$('hv');h.setAttribute('x1',X(d));h.setAttribute('x2',X(d));h.setAttribute('opacity','.5')};show(td);
-  const mv=e=>{const r=sv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;show(Math.max(0,Math.min(td,Math.round((x-L)/(W-L-R)*D))))};sv.addEventListener('pointermove',mv);sv.addEventListener('pointerdown',mv)});
- return{html,proj,spent:spent/td}}
+ const ideal=d=>start-T.bud*d/D,spent=start-b,proj=start-spent/td*D,all=[...P.map(p=>p.v),end,proj];
+ let lo=Math.min(...all),hi=Math.max(...all);if(hi===lo){hi+=1;lo-=1}
+ const pd=(hi-lo)*.16;lo-=pd;hi+=pd;
+ const W=700,H=big?286:246,L=62,R=18,Tp=20,B=34,X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B;
+ const good=b>=ideal(td),col=good?'#35dfc4':'#ff7885',light=good?'#8affeb':'#ffb0b8';
+ const pts=P.map(p=>({x:X(p.d),y:Y(p.v)}));
+ const line=pts.length===1?'M'+pts[0].x+' '+pts[0].y:pts.slice(0,-1).map((p,i)=>{
+  const p0=pts[Math.max(0,i-1)],p1=p,p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];
+  const c1={x:p1.x+(p2.x-p0.x)/6,y:p1.y+(p2.y-p0.y)/6},c2={x:p2.x-(p3.x-p1.x)/6,y:p2.y-(p3.y-p1.y)/6};
+  return(i===0?'M'+p1.x.toFixed(2)+' '+p1.y.toFixed(2):'')+' C'+c1.x.toFixed(2)+' '+c1.y.toFixed(2)+' '+c2.x.toFixed(2)+' '+c2.y.toFixed(2)+' '+p2.x.toFixed(2)+' '+p2.y.toFixed(2);
+ }).join(' ');
+ const area=line+' L'+X(td).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
+ const fmt=v=>new Intl.NumberFormat('fr-FR',{notation:'compact',maximumFractionDigits:1}).format(v)+' €';
+ const grid=Array.from({length:5},(_,i)=>{const v=hi-(hi-lo)*i/4,yy=Y(v);return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="var(--mu)" stroke-opacity="'+(i===4?'.20':'.12')+'" stroke-dasharray="'+(i===4?'none':'3 7')+'"/><text x="'+(L-10)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="var(--mu)" opacity=".8">'+fmt(v)+'</text>'}).join('');
+ const days=[...new Set([1,5,10,15,20,25,D].filter(d=>d<=D))];
+ const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10" fill="var(--mu)">'+d+'</text>').join('');
+ const marks=P.filter(p=>p.d>0&&per[p.d]>0).map(p=>'<circle cx="'+X(p.d).toFixed(2)+'" cy="'+Y(p.v).toFixed(2)+'" r="3.1" fill="'+col+'" stroke="var(--cd)" stroke-width="1.5" class="curve-event"/>').join('');
+ const actualEnd=Y(b),todayX=X(td),projectX=X(D),projectY=Y(proj);
+ const dayLeft=D-td+1;
+ const summary=big?'<div class="stat curve-stats"><div><small>Solde actuel</small><b>'+eur(b)+'</b></div><div><small>Fin de mois estimée</small><b class="'+cls(proj)+'">'+eur(proj)+'</b></div><div><small>Moyenne dépensée / jour</small><b>'+eur(spent/td)+'</b></div><div><small>Disponible / jour restant</small><b>'+eur(Math.max(0,T.rest)/dayLeft)+'</b></div></div>':'';
+ const html=summary+
+ '<div class="curve-wrap">'+
+ '<div class="curve-topline"><span class="curve-period">'+mn+' '+y+'</span><span class="curve-status"><i style="background:'+col+'"></i>'+(good?'Dans le rythme':'Au-dessus du rythme')+'</span></div>'+
+ '<svg id="cs" class="curve-svg" viewBox="0 0 '+W+' '+H+'" role="img" tabindex="0" aria-label="Évolution du solde sur le mois. Utilise les flèches gauche et droite pour parcourir les jours.">'+
+ '<defs>'+
+ '<linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity=".30"/><stop offset="55%" stop-color="'+col+'" stop-opacity=".09"/><stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient>'+
+ '<linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="55%" stop-color="'+col+'"/><stop offset="100%" stop-color="'+light+'"/></linearGradient>'+
+ '<radialGradient id="curvePoint"><stop offset="0%" stop-color="'+light+'" stop-opacity=".95"/><stop offset="100%" stop-color="'+col+'" stop-opacity=".15"/></radialGradient>'+
+ '<filter id="curveGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
+ '</defs>'+
+ grid+
+ '<path d="M'+L+' '+Y(start).toFixed(2)+' L'+(W-R)+' '+Y(end).toFixed(2)+'" fill="none" stroke="var(--mu)" stroke-opacity=".5" stroke-width="1.4" stroke-dasharray="5 7"/>'+
+ '<path d="'+area+'" fill="url(#curveArea)" class="curve-fill"/>'+
+ '<path d="M'+todayX.toFixed(2)+' '+actualEnd.toFixed(2)+' L'+projectX.toFixed(2)+' '+projectY.toFixed(2)+'" fill="none" stroke="'+col+'" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="3 7" opacity=".9"/>'+
+ '<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".20" filter="url(#curveGlow)" vector-effect="non-scaling-stroke"/>'+
+ '<path d="'+line+'" class="curve-line" pathLength="1" fill="none" stroke="url(#curveStroke)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
+ marks+
+ '<line id="todayGuide" x1="'+todayX.toFixed(2)+'" y1="'+Tp+'" x2="'+todayX.toFixed(2)+'" y2="'+bs+'" stroke="'+col+'" stroke-width="1.2" stroke-dasharray="3 5" opacity=".55"/>'+
+ '<circle id="todayHalo" cx="'+todayX.toFixed(2)+'" cy="'+actualEnd.toFixed(2)+'" r="12" fill="url(#curvePoint)" opacity=".55"/>'+
+ '<circle id="todayDot" cx="'+todayX.toFixed(2)+'" cy="'+actualEnd.toFixed(2)+'" r="5.2" fill="'+col+'" stroke="var(--cd)" stroke-width="2.5"/>'+
+ '<circle cx="'+projectX.toFixed(2)+'" cy="'+projectY.toFixed(2)+'" r="4" fill="var(--cd)" stroke="'+col+'" stroke-width="2.2"/>'+
+ xl+
+ '<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
+ '</svg>'+
+ '<div class="curve-legend"><span><i class="leg-real"></i>Solde réel</span><span><i class="leg-ideal"></i>Rythme idéal</span><span><i class="leg-forecast"></i>Projection</span></div>'+
+ '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip"></div>';
+ AF.push(()=>{
+  const ci=$(big?'ci':'cix'),sv=$('cs');if(!sv||!ci)return;
+  let selected=td;
+  const show=d=>{
+   selected=Math.max(0,Math.min(td,d));
+   const p=P[selected],diff=p.v-ideal(selected),date=selected?selected+' '+mn:'Début du mois';
+   const items=ev[selected];
+   ci.innerHTML='<div class="curve-tip-date">'+date+'</div><div class="curve-tip-values"><div><small>Solde</small><b>'+eur(p.v)+'</b></div><div><small>Rythme idéal</small><b>'+eur(ideal(selected))+'</b></div><div><small>Écart</small><b class="'+cls(diff)+'">'+(diff>=0?'+':'')+eur(diff)+'</b></div></div>'+
+    (items.length?'<div class="curve-tip-events">'+items.map(e=>'<span>'+esc(e.desc||e.label)+' · '+eur(e.amt)+'</span>').join('')+'</div>':'<div class="curve-tip-empty">Aucune dépense enregistrée ce jour-là</div>');
+   const x=X(selected),yy=Y(p.v);
+   const guide=$('hv');if(guide){guide.setAttribute('x1',x);guide.setAttribute('x2',x);guide.setAttribute('y1',Tp);guide.setAttribute('y2',bs);guide.setAttribute('opacity','0')}
+   const tg=$('todayGuide');if(tg){tg.setAttribute('x1',x);tg.setAttribute('x2',x);tg.setAttribute('opacity','.6')}
+   const dot=$('todayDot'),halo=$('todayHalo');if(dot){dot.setAttribute('cx',x);dot.setAttribute('cy',yy)}if(halo){halo.setAttribute('cx',x);halo.setAttribute('cy',yy)}
+  };
+  const pick=e=>{const r=sv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;show(Math.round((x-L)/(W-L-R)*D))};
+  sv.addEventListener('pointermove',pick);sv.addEventListener('pointerdown',pick);
+  sv.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();show(selected+(e.key==='ArrowRight'?1:-1))}else if(e.key==='Home'){e.preventDefault();show(0)}else if(e.key==='End'){e.preventDefault();show(td)}});
+  show(td);
+ });
+ return{html,proj,spent:spent/td}
+}
 function txList(n,filter){let a=[...S.log].sort((x,y)=>y.t-x.t);
  if(filter){const q=U.q.toLowerCase(),mn=num(U.min),sn=U.since?new Date(U.since).getTime():0;a=a.filter(e=>(U.ty==='all'||(U.ty==='rev')===(e.k==='rev'))&&(!q||((e.desc||'')+e.label).toLowerCase().includes(q))&&(!mn||e.amt>=mn)&&(!sn||e.t>=sn))}
  if(n)a=a.slice(0,n);if(!a.length)return'<p class="mu">Aucune transaction.</p>';
