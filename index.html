@@ -285,6 +285,28 @@ input,select,textarea{font-size:16px}
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
 }
 
+/* GLASSMORPHISM premium */
+:root{--glass-line:rgba(255,255,255,.12);--glass-shadow:0 18px 55px rgba(0,0,0,.22)}
+body{background-color:#080d1c;background-image:radial-gradient(ellipse at 12% 0%,rgba(104,83,220,.2),transparent 42%),radial-gradient(ellipse at 88% 18%,rgba(27,190,190,.12),transparent 38%),linear-gradient(145deg,#080d1c,#10182b 58%,#0b1322);background-attachment:fixed}
+#sb{background:rgba(8,13,27,.72);backdrop-filter:blur(24px) saturate(145%);-webkit-backdrop-filter:blur(24px) saturate(145%);border-right:1px solid var(--glass-line)}
+.cd{background:linear-gradient(145deg,rgba(255,255,255,.085),rgba(255,255,255,.025));border:1px solid var(--glass-line);box-shadow:var(--glass-shadow),inset 0 1px 0 rgba(255,255,255,.06);backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%)}
+.cd:hover{background:linear-gradient(145deg,rgba(255,255,255,.11),rgba(255,255,255,.035));border-color:rgba(143,132,255,.35)}
+input,select,.fi,.stat div,.bar,.note,#ci,.ti,.sf{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.11)}
+.seg{background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.08)}
+.seg button.on{background:linear-gradient(135deg,#7658ed,#3d9cae);box-shadow:0 5px 20px rgba(103,83,230,.35)}
+.hero,.aic{border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+#bn{background:rgba(8,13,27,.78);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%);border-top:1px solid var(--glass-line)}
+.m.a,.chatbox,.acard{background:rgba(255,255,255,.055);border:1px solid var(--glass-line);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+#cs{display:block;max-width:100%;margin:8px 0 2px;touch-action:pan-y}
+#cs path[fill=none]{stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px currentColor)}
+#ci,#cix{border:1px solid rgba(45,212,191,.2);background:linear-gradient(120deg,rgba(45,212,191,.08),rgba(121,87,232,.08));border-radius:13px;padding:10px 12px;min-height:42px}
+:root[data-theme=light] body{background-color:#e9edf8;background-image:radial-gradient(ellipse at 10% 0%,rgba(121,87,232,.13),transparent 42%),radial-gradient(ellipse at 90% 20%,rgba(45,212,191,.11),transparent 38%),linear-gradient(145deg,#eef1fa,#e5eaf5)}
+:root[data-theme=light] #sb,:root[data-theme=light] #bn{background:rgba(255,255,255,.72);border-color:rgba(80,90,130,.13)}
+:root[data-theme=light] .cd{background:linear-gradient(145deg,rgba(255,255,255,.84),rgba(255,255,255,.55));border-color:rgba(255,255,255,.85);box-shadow:0 16px 42px rgba(52,67,110,.10),inset 0 1px 0 #fff}
+:root[data-theme=light] input,:root[data-theme=light] select,:root[data-theme=light] .fi,:root[data-theme=light] .stat div,:root[data-theme=light] .bar,:root[data-theme=light] .note,:root[data-theme=light] #ci,:root[data-theme=light] .ti{background:rgba(255,255,255,.58);border-color:rgba(80,90,130,.13)}
+:root[data-theme=light] .m.a,:root[data-theme=light] .chatbox,:root[data-theme=light] .acard{background:rgba(255,255,255,.62);border-color:rgba(80,90,130,.14)}
+@media(max-width:860px){.cd{backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}#bn{padding-top:8px}.hero .hs{gap:6px}.hero .hs div{padding:8px}.hero .hs b{font-size:14px}#cs{margin-top:4px}}
+@media(prefers-reduced-motion:reduce){.cd{transition:none}}
 </style>
 </head>
 <body>
@@ -428,7 +450,7 @@ function bal(big){const T=totals(),now=new Date(),y=now.getFullYear(),mo=now.get
  const P=[{d:0,v:start}];let b=start;for(let d=1;d<=td;d++){b-=per[d];P.push({d,v:b})}
  const ideal=d=>start-T.bud*d/D,spent=start-b,proj=start-spent/td*D,all=[...P.map(p=>p.v),end,proj];let lo=Math.min(...all),hi=Math.max(...all);if(hi===lo){hi+=1;lo-=1}
  const pd=(hi-lo)*.12;lo-=pd;hi+=pd;const W=640,H=big?250:200,L=8,R=8,Tp=12,B=24,X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B,good=b>=ideal(td),col=good?'#2dd4bf':'#f0716f';
- const line=P.map((p,i)=>(i?'L':'M')+X(p.d).toFixed(1)+' '+Y(p.v).toFixed(1)).join(' ');
+ const pts=P.map(p=>({x:X(p.d),y:Y(p.v)}));const line=pts.map((p,i)=>i===0?'M'+p.x.toFixed(1)+' '+p.y.toFixed(1):'Q'+pts[i-1].x.toFixed(1)+' '+pts[i-1].y.toFixed(1)+' '+((pts[i-1].x+p.x)/2).toFixed(1)+' '+((pts[i-1].y+p.y)/2).toFixed(1)).join(' ')+' T'+pts[pts.length-1].x.toFixed(1)+' '+pts[pts.length-1].y.toFixed(1);
  const xl=[1,5,10,15,20,25,D].map(d=>`<text x="${X(d)}" y="${H-7}" text-anchor="middle" font-size="11" fill="var(--mu)">${d}</text>`).join('');
  const dayLeft=D-td+1,html=`${big?`<div class="stat"><div><small>Solde actuel</small><b>${eur(b)}</b></div><div><small>Fin de mois (estimation)</small><b class="${cls(proj)}">${eur(proj)}</b></div><div><small>Dépense moyenne / jour</small><b>${eur(spent/td)}</b></div><div><small>Budget quotidien dispo</small><b>${eur(Math.max(0,T.rest)/dayLeft)}</b></div></div>`:''}
  <svg id="cs" viewBox="0 0 ${W} ${H}" style="width:100%;height:auto"><defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".3"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
