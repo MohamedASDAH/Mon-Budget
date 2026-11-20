@@ -379,6 +379,7 @@ main{z-index:2}
 </style>
 </head>
 <body>
+<div id="wallpaper" aria-hidden="true"></div>
 <div id="auth" class="on"></div>
 <aside id="sb"></aside>
 <main><div class="hd"><div class="row"><button class="mb" onclick="document.getElementById('sb').classList.toggle('open')" aria-label="Menu">☰</button><div><h1 id="t1"></h1><p id="t2"></p></div></div><div class="row"><button class="g th" id="thh" onclick="toggleTheme()" aria-label="Thème"></button><button class="hdb" onclick="U.p='tx';U.tt='var';go();setTimeout(()=>{const e=document.getElementById('tn');e&&e.focus()},50)">+ Transaction</button></div></div><div id="pg"></div></main>
@@ -514,7 +515,7 @@ function wallRemove(){
 }
 function wallUpload(input){
  const file=input&&input.files&&input.files[0];if(!file)return;
- if(!/^image\\/(jpeg|png|webp|gif|bmp)$/i.test(file.type)){toast('Choisis une image JPG, PNG, WebP ou GIF');input.value='';return}
+ if(!/^image\/(jpeg|png|webp|gif|bmp)$/i.test(file.type)){toast('Choisis une image JPG, PNG, WebP ou GIF');input.value='';return}
  if(file.size>15*1024*1024){toast('Image trop volumineuse : 15 Mo maximum');input.value='';return}
  const reader=new FileReader();
  reader.onerror=()=>toast('Impossible de lire cette image');
