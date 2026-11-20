@@ -584,6 +584,7 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
 :root[data-theme="light"] #pg :is(.pos,.positive,.success,.green){color:#087647!important}
 :root[data-theme="light"] #pg :is(.neg,.negative,.danger,.red){color:#b42332!important}
 :root[data-theme="light"] #pg :is(.hero,.hero *, .aic,.aic *){color:#fff!important}
+:root[data-theme="light"] #pg :is(button.p,button.primary,.primary,.auth-submit){color:#fff!important}
 :root[data-theme="light"] #pg button:not(.p):not(.primary):not(.auth-submit){color:#263451!important}
 :root[data-theme="light"] #pg input,:root[data-theme="light"] #pg select,:root[data-theme="light"] #pg textarea{background:#fff!important;color:#15213b!important;border-color:#c4cede!important}
 :root[data-theme="light"] #pg input::placeholder,:root[data-theme="light"] #pg textarea::placeholder{color:#687791!important;opacity:1!important}
@@ -753,7 +754,7 @@ async function wallLoadSync(){
     WALL_REMOTE_DATA='';
     localStorage.removeItem(WALL_KEY);localStorage.removeItem(WALL_NAME_KEY);
    }
-   localStorage.setItem(WALL_OP_KEY,String(data.wallpaper_opacity||48));
+   try{localStorage.setItem(WALL_OP_KEY,String(data.wallpaper_opacity||48))}catch(storageError){console.warn('Réglage du fond non mis en cache:',storageError)}
    WALL_REMOTE_STATUS='Synchronisé avec ton compte · visible sur tes autres appareils';
   }else{
    const local=wallLocalData();
