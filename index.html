@@ -808,7 +808,6 @@ function wallUpload(input){
    }
    if(!ok){toast('Cette image est trop lourde, essaie une image plus légère');return}
    try{localStorage.setItem(WALL_KEY,data);localStorage.setItem(WALL_NAME_KEY,file.name);if(!localStorage.getItem(WALL_OP_KEY))localStorage.setItem(WALL_OP_KEY,'48')}catch(e){WALL_REMOTE_DATA=data;try{localStorage.setItem(WALL_NAME_KEY,file.name)}catch(_){} }
-   catch(e){toast('Espace de stockage insuffisant sur cet appareil');return}
    wallApply();
    if(UID)wallRemoteWrite(data,file.name,wallOpacityVal(),true);
    else toast('Fond appliqué sur cet appareil. Connecte-toi pour le synchroniser.');
