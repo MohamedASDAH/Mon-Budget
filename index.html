@@ -340,6 +340,42 @@ input,select{background:rgba(4,10,25,.25);border:1px solid rgba(191,204,255,.12)
 @media(max-width:860px){main{padding:calc(13px + env(safe-area-inset-top,0px)) 13px calc(94px + env(safe-area-inset-bottom,0px))}.cd{padding:16px;border-radius:19px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}.hd{margin-bottom:17px}.hd h1{font-size:21px}.kp b{font-size:21px}.kp .ic{width:36px;height:36px}.hero{border-radius:20px}.hero .bg{font-size:29px}.hero .hs{gap:7px}.hero .hs div{padding:9px 8px;border-radius:12px}.hero .hs b{font-size:14px}#bn{padding:8px 7px calc(8px + env(safe-area-inset-bottom,0px))}#bn button{gap:3px;font-size:10px}#bn button b{font-size:20px}.stat{grid-template-columns:repeat(2,minmax(0,1fr))}.stat div{padding:10px}.stat b{font-size:15px}#cs{margin:5px 0}.grid{gap:11px}.g4{gap:10px}.r{font-size:13px}.expense-add{max-width:100%}}
 @media(max-width:380px){main{padding-left:10px;padding-right:10px}.cd{padding:13px}.hero .bg{font-size:25px}.kp b{font-size:19px}.hero .hs{grid-template-columns:1fr 1fr}.hero .hs div:last-child{grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){.cd,.ni,button{transition:none!important}.cd:hover{transform:none}}
+
+/* WALLPAPER LAYER AND DEEPER GLASS FINISH */
+body{position:relative;isolation:isolate}
+body::before{z-index:1}
+#wallpaper{display:none;position:fixed;inset:0;z-index:0;pointer-events:none;background-position:center;background-size:cover;background-repeat:no-repeat;opacity:var(--wall-opacity,.48);transition:opacity .2s ease}
+main{z-index:2}
+#sb{z-index:30}
+#bn{z-index:40}
+.cd{background:linear-gradient(145deg,rgba(29,39,68,.54),rgba(13,22,43,.43));border-color:rgba(205,216,255,.19);backdrop-filter:blur(30px) saturate(165%);-webkit-backdrop-filter:blur(30px) saturate(165%);box-shadow:0 18px 58px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.12)}
+.cd:before{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.4),transparent)}
+.hero,.aic{backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%)}
+#sb{background:rgba(7,12,27,.66);backdrop-filter:blur(32px) saturate(165%);-webkit-backdrop-filter:blur(32px) saturate(165%)}
+.hd{padding:4px 2px 0}
+.wall-setting{overflow:visible}
+.wall-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.wall-head h3{margin-bottom:5px}
+.wall-head p{margin:0;max-width:620px;font-size:13px}
+.wall-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.wall-upload{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:12px;background:linear-gradient(130deg,#8065f2,#557ff0);color:#fff;font-weight:650;cursor:pointer;box-shadow:0 7px 22px rgba(94,91,220,.25)}
+.wall-upload input{display:none}
+.wall-range{display:flex;align-items:center;gap:12px;min-width:min(100%,280px);flex:1;padding:8px 12px;border:1px solid var(--bd);border-radius:12px;background:rgba(255,255,255,.045)}
+.wall-range>span{font-size:12px;white-space:nowrap;color:var(--mu)}
+.wall-range b{color:var(--tx);font-variant-numeric:tabular-nums}
+.wall-range input{min-width:90px;padding:0;border:0;background:transparent;accent-color:var(--ac)}
+.wall-status{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx)}
+.wall-status-dot{width:8px;height:8px;border-radius:50%;background:var(--tq);box-shadow:0 0 12px var(--tq)}
+:root[data-theme=light] .cd{background:linear-gradient(145deg,rgba(255,255,255,.79),rgba(255,255,255,.58));border-color:rgba(255,255,255,.78)}
+:root[data-theme=light] #sb{background:rgba(255,255,255,.70)}
+:root[data-theme=light] .wall-range{background:rgba(255,255,255,.58)}
+@media(max-width:860px){
+ .wall-actions{align-items:stretch}.wall-upload,.wall-actions>button{flex:1;min-width:calc(50% - 6px);text-align:center}
+ .wall-range{flex:1 1 100%;min-width:100%;justify-content:space-between}
+ .wall-range input{max-width:46%}
+ .wall-status{align-items:flex-start}
+}
+@media(prefers-reduced-motion:reduce){#wallpaper{transition:none}}
 </style>
 </head>
 <body>
@@ -454,8 +490,52 @@ const IC={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1
 const ic=(n,z)=>`<svg viewBox="0 0 24 24" width="${z||18}" height="${z||18}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[n]||''}</svg>`;
 let TH;try{TH=localStorage.getItem('budget_theme')}catch(e){}
 if(!TH)TH=typeof matchMedia==='function'&&matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
-function applyTh(){document.documentElement.dataset.theme=TH;const b=$('thh');if(b)b.innerHTML=ic(TH==='dark'?'sun':'moon',18)}
+function applyTh(){document.documentElement.dataset.theme=TH;const b=$('thh');if(b)b.innerHTML=ic(TH==='dark'?'sun':'moon',18);wallApply()}
 function toggleTheme(){TH=TH==='dark'?'light':'dark';try{localStorage.setItem('budget_theme',TH)}catch(e){}go();toast(TH==='dark'?'🌙 Mode nuit':'☀️ Mode jour')}
+const WALL_KEY='mon_budget_wallpaper_v1',WALL_NAME_KEY='mon_budget_wallpaper_name_v1',WALL_OP_KEY='mon_budget_wallpaper_opacity_v1';
+function wallFileName(){try{return esc(localStorage.getItem(WALL_NAME_KEY)||'Aucun fond d’écran sélectionné')}catch(e){return'Aucun fond d’écran sélectionné'}}
+function wallOpacityVal(){try{return localStorage.getItem(WALL_OP_KEY)||'48'}catch(e){return'48'}}
+function wallApply(){
+ let img='',op=wallOpacityVal();
+ try{img=localStorage.getItem(WALL_KEY)||''}catch(e){}
+ document.documentElement.style.setProperty('--wall-opacity',String(Math.max(15,Math.min(72,+op||48))/100));
+ const el=$('wallpaper');if(!el)return;
+ el.style.display=img?'block':'none';
+ if(img){const overlay=TH==='light'?'linear-gradient(rgba(239,242,250,.36),rgba(239,242,250,.56))':'linear-gradient(rgba(4,8,22,.43),rgba(4,8,22,.62))';el.style.backgroundImage=overlay+',url("'+img+'")'}
+ else el.style.backgroundImage='none';
+ const name=$('wallName');if(name)name.textContent=wallFileName().replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&quot;/g,'"');
+ const range=$('wallIntensity');if(range)range.value=op;
+ const val=$('wallValue');if(val)val.textContent=op+' %';
+}
+function wallOpacity(v){const n=Math.max(15,Math.min(72,+v||48));try{localStorage.setItem(WALL_OP_KEY,String(n))}catch(e){}wallApply()}
+function wallRemove(){
+ try{localStorage.removeItem(WALL_KEY);localStorage.removeItem(WALL_NAME_KEY)}catch(e){}
+ wallApply();toast('Fond d’écran retiré ✓');
+}
+function wallUpload(input){
+ const file=input&&input.files&&input.files[0];if(!file)return;
+ if(!/^image\\/(jpeg|png|webp|gif|bmp)$/i.test(file.type)){toast('Choisis une image JPG, PNG, WebP ou GIF');input.value='';return}
+ if(file.size>15*1024*1024){toast('Image trop volumineuse : 15 Mo maximum');input.value='';return}
+ const reader=new FileReader();
+ reader.onerror=()=>toast('Impossible de lire cette image');
+ reader.onload=()=>{
+  const img=new Image();
+  img.onerror=()=>toast('Cette image ne peut pas être utilisée');
+  img.onload=()=>{
+   const scale=Math.min(1,2000/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
+   const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+   const ctx=canvas.getContext('2d');if(!ctx){toast('Préparation de l’image impossible');return}
+   ctx.drawImage(img,0,0,w,h);
+   let data=canvas.toDataURL('image/jpeg',.8);if(data.length>1900000)data=canvas.toDataURL('image/jpeg',.66);
+   try{localStorage.setItem(WALL_KEY,data);localStorage.setItem(WALL_NAME_KEY,file.name);if(!localStorage.getItem(WALL_OP_KEY))localStorage.setItem(WALL_OP_KEY,'48')}
+   catch(e){toast('Espace de stockage insuffisant sur cet appareil');return}
+   wallApply();toast('Fond d’écran appliqué ✓');
+  };
+  img.src=reader.result;
+ };
+ reader.readAsDataURL(file);
+}
+
 const PV={};function cuAll(){document.querySelectorAll('[data-v]').forEach(e=>{const k=e.dataset.k,to=+e.dataset.v,from=PV[k]!==undefined?PV[k]:0;PV[k]=to;if(from===to){e.textContent=eur(to);return}const t0=performance.now();(function f(t){const q=Math.min(1,(t-t0)/650);e.textContent=eur(from+(to-from)*(1-Math.pow(1-q,3)));if(q<1)requestAnimationFrame(f)})(t0)})}
 function hring(p){const R=40,C=2*Math.PI*R,f=Math.min(1,p)*C;return`<svg viewBox="0 0 100 100" style="width:100%"><circle cx="50" cy="50" r="${R}" fill="none" stroke="#ffffff33" stroke-width="9"/><circle class="an" cx="50" cy="50" r="${R}" fill="none" stroke="${p>1?'#ffb4b4':'#fff'}" stroke-width="9" stroke-linecap="round" stroke-dasharray="${f} ${C}" transform="rotate(-90 50 50)" style="transition:stroke-dasharray .8s"/><text x="50" y="57" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">${Math.round(p*100)}%</text></svg>`}
 function dim(){const n=new Date;return[new Date(n.getFullYear(),n.getMonth()+1,0).getDate(),n.getDate()]}
@@ -576,6 +656,15 @@ ai(){const cv=curConv();msgs=cv.msgs;const T=totals(),n=S.set.name,mh=msgs.lengt
  <button class="g mb2" onclick="U.hs=!U.hs;go()" style="margin-top:12px;display:none">🕘 Historique</button>`},
 set(){return`<div class="grid g2e"><div class="cd"><h3>Profil</h3><input data-f="u_nm" class="fi" placeholder="Ton prénom" value="${esc(S.set.name)}" oninput="S.set.name=this.value;go()">${acctHtml()}</div>
  <div class="cd"><h3>Sauvegarde et export</h3><div class="row"><button class="g" onclick="exp('csv')">⬇ Transactions (CSV, ouvre dans Excel)</button><button class="g" onclick="exp('json')">⬇ Sauvegarde complète (JSON)</button></div><div class="row" style="margin-top:14px"><button class="g" id="bm" onclick="arm(this,newMonth,'🗓️ Clôturer le mois')">🗓️ Clôturer le mois</button><button class="g" id="br" onclick="arm(this,()=>{S=def();go()},'↺ Réinitialiser')">↺ Réinitialiser</button></div><p class="mu" style="font-size:12px">« Clôturer le mois » archive le mois (pour les statistiques), reporte le solde et remet les dépenses à zéro. Chaque action destructive demande une 2e confirmation.</p></div></div>
+ <div class="cd wall-setting" style="margin-top:14px">
+ <div class="wall-head"><div><h3>Fond d’écran</h3><p class="mu">Personnalise l’arrière-plan de ton application avec une photo ou une image que tu aimes.</p></div><span class="pill">Apparence</span></div>
+ <div class="wall-actions">
+  <label class="wall-upload">＋ Choisir une image<input id="wallFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" onchange="wallUpload(this)"></label>
+  <button class="g" type="button" onclick="wallRemove()">Retirer le fond</button>
+  <label class="wall-range"><span>Visibilité de l’image <b id="wallValue">${wallOpacityVal()} %</b></span><input id="wallIntensity" type="range" min="15" max="72" step="1" value="${wallOpacityVal()}" oninput="wallOpacity(this.value)"></label>
+ </div>
+ <div class="wall-status"><span class="wall-status-dot"></span><span id="wallName">${wallFileName()}</span><span class="mu">· Image enregistrée uniquement sur cet appareil</span></div>
+ </div>
  <div class="cd" style="margin-top:14px"><h3>Mois archivés</h3>${S.hist.length?S.hist.map(s=>`<div class="r" style="--n:3;grid-template-columns:1fr 1fr 1fr 1fr"><span>${s.m}</span><span class="pos">+${eur(s.rev)}</span><span class="neg">−${eur(s.dep)}</span><span>${eur(s.ep)}</span></div>`).join(''):'<p class="mu">Aucun mois archivé pour l’instant.</p>'}</div>`}
 };
 
