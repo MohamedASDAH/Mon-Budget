@@ -507,6 +507,7 @@ async function enter(sess){if(ENT)return;const guestSnapshot=S&&S.rev?JSON.strin
  try{const sn=await tmo(sref().get(),9000),cs=await tmo(cref().get(),9000);if(!sn)throw 0;
   if(sn.exists){S=JSON.parse(sn.data().j);lastJ=sn.data().j}else{let src=null;try{src=JSON.parse(localStorage.getItem('budget_u_'+UID))}catch(e){}if(src&&src.rev)S=src;else if(guestSnapshot){try{S=JSON.parse(guestSnapshot)}catch(e){S=null}}else S=null;lastJ=''}
   norm();if(cs&&cs.exists){try{S.convs=JSON.parse(cs.data().j);lastC=cs.data().j}catch(e){}}
+  await wallLoadSync();
   sref().onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||DEL)return;const d=sn.data();if(d.j===lastJ)return;try{const cv=S.convs;S=JSON.parse(d.j);S.convs=cv;norm();lastJ=d.j;localSave();go();toast('☁ Mis à jour depuis un autre appareil')}catch(e){}});
   cref().onSnapshot(sn=>{if(!sn.exists||sn.metadata.hasPendingWrites||DEL)return;const d=sn.data();if(d.j===lastC)return;try{S.convs=JSON.parse(d.j);lastC=d.j;localSave();if(U.p==='ai')go()}catch(e){}});
   SY='ok';startApp();pushRemote()}catch(e){ENT=false;UID=null;DB=null;ME=null;authView('login','Impossible de charger les données Supabase. Vérifie la table user_state, ses politiques RLS et la connexion réseau, puis réessaie.')}}
@@ -540,24 +541,76 @@ if(!TH)TH=typeof matchMedia==='function'&&matchMedia('(prefers-color-scheme: lig
 function applyTh(){document.documentElement.dataset.theme=TH;const b=$('thh');if(b)b.innerHTML=ic(TH==='dark'?'sun':'moon',18);wallApply()}
 function toggleTheme(){TH=TH==='dark'?'light':'dark';try{localStorage.setItem('budget_theme',TH)}catch(e){}go();toast(TH==='dark'?'🌙 Mode nuit':'☀️ Mode jour')}
 const WALL_KEY='mon_budget_wallpaper_v1',WALL_NAME_KEY='mon_budget_wallpaper_name_v1',WALL_OP_KEY='mon_budget_wallpaper_opacity_v1';
+let WALL_REMOTE_STATUS='Fond synchronisé avec ton compte',wallSyncTimer=null;
 function wallFileName(){try{return esc(localStorage.getItem(WALL_NAME_KEY)||'Aucun fond d’écran sélectionné')}catch(e){return'Aucun fond d’écran sélectionné'}}
 function wallOpacityVal(){try{return localStorage.getItem(WALL_OP_KEY)||'48'}catch(e){return'48'}}
+function wallLocalData(){try{return localStorage.getItem(WALL_KEY)||''}catch(e){return''}}
 function wallApply(){
- let img='',op=wallOpacityVal();
- try{img=localStorage.getItem(WALL_KEY)||''}catch(e){}
+ const img=wallLocalData(),op=wallOpacityVal();
  document.documentElement.style.setProperty('--wall-opacity',String(Math.max(15,Math.min(72,+op||48))/100));
- const el=$('wallpaper');if(!el)return;
- el.style.display=img?'block':'none';
- if(img){const overlay=TH==='light'?'linear-gradient(rgba(239,242,250,.36),rgba(239,242,250,.56))':'linear-gradient(rgba(4,8,22,.43),rgba(4,8,22,.62))';el.style.backgroundImage=overlay+',url("'+img+'")'}
- else el.style.backgroundImage='none';
+ const el=$('wallpaper');if(el){el.style.display=img?'block':'none';if(img){const overlay=TH==='light'?'linear-gradient(rgba(239,242,250,.36),rgba(239,242,250,.56))':'linear-gradient(rgba(4,8,22,.43),rgba(4,8,22,.62))';el.style.backgroundImage=overlay+',url("'+img+'")'}else el.style.backgroundImage='none'}
  const name=$('wallName');if(name)name.textContent=wallFileName().replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&quot;/g,'"');
  const range=$('wallIntensity');if(range)range.value=op;
  const val=$('wallValue');if(val)val.textContent=op+' %';
+ const status=$('wallSyncLabel');if(status)status.textContent=WALL_REMOTE_STATUS;
 }
-function wallOpacity(v){const n=Math.max(15,Math.min(72,+v||48));try{localStorage.setItem(WALL_OP_KEY,String(n))}catch(e){}wallApply()}
-function wallRemove(){
+async function wallRemoteWrite(img,name,op,notify){
+ if(!UID||!sb)return false;
+ WALL_REMOTE_STATUS='Synchronisation du fond…';wallApply();
+ try{
+  const{error}=await sb.from('user_preferences').upsert({user_id:UID,wallpaper_data:img||null,wallpaper_name:name||null,wallpaper_opacity:Math.max(15,Math.min(72,+op||48)),updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(error)throw error;
+  WALL_REMOTE_STATUS='Synchronisé avec ton compte · visible sur tes autres appareils';
+  wallApply();if(notify)toast('Fond synchronisé sur tes appareils ✓');return true;
+ }catch(e){
+  console.error('Wallpaper sync:',e);
+  WALL_REMOTE_STATUS='Synchronisation impossible · fond conservé sur cet appareil';
+  wallApply();if(notify)toast('Le fond reste sur ce PC, synchronisation impossible');
+  return false;
+ }
+}
+async function wallLoadSync(){
+ if(!UID||!sb)return;
+ try{
+  const{data,error}=await sb.from('user_preferences').select('wallpaper_data,wallpaper_name,wallpaper_opacity').eq('user_id',UID).maybeSingle();
+  if(error)throw error;
+  if(data){
+   if(data.wallpaper_data){
+    localStorage.setItem(WALL_KEY,data.wallpaper_data);
+    if(data.wallpaper_name)localStorage.setItem(WALL_NAME_KEY,data.wallpaper_name);
+    else localStorage.removeItem(WALL_NAME_KEY);
+   }else{
+    localStorage.removeItem(WALL_KEY);localStorage.removeItem(WALL_NAME_KEY);
+   }
+   localStorage.setItem(WALL_OP_KEY,String(data.wallpaper_opacity||48));
+   WALL_REMOTE_STATUS='Synchronisé avec ton compte · visible sur tes autres appareils';
+  }else{
+   const local=wallLocalData();
+   if(local){
+    const ok=await wallRemoteWrite(local,localStorage.getItem(WALL_NAME_KEY)||'',wallOpacityVal(),false);
+    if(!ok)return;
+   }else WALL_REMOTE_STATUS='Choisis une image pour la synchroniser sur tes appareils';
+  }
+ }catch(e){
+  console.error('Wallpaper load:',e);
+  WALL_REMOTE_STATUS='Impossible de charger le fond depuis ton compte';
+ }
+ wallApply();
+}
+function wallQueueRemote(){
+ if(!UID)return;
+ clearTimeout(wallSyncTimer);
+ wallSyncTimer=setTimeout(()=>wallRemoteWrite(wallLocalData(),(()=>{try{return localStorage.getItem(WALL_NAME_KEY)||''}catch(e){return''}})(),wallOpacityVal(),false),650);
+}
+function wallOpacity(v){
+ const n=Math.max(15,Math.min(72,+v||48));
+ try{localStorage.setItem(WALL_OP_KEY,String(n))}catch(e){}
+ wallApply();wallQueueRemote();
+}
+async function wallRemove(){
  try{localStorage.removeItem(WALL_KEY);localStorage.removeItem(WALL_NAME_KEY)}catch(e){}
- wallApply();toast('Fond d’écran retiré ✓');
+ clearTimeout(wallSyncTimer);wallApply();
+ if(UID)await wallRemoteWrite('', '',wallOpacityVal(),true);else toast('Fond d’écran retiré ✓');
 }
 function wallUpload(input){
  const file=input&&input.files&&input.files[0];if(!file)return;
@@ -569,14 +622,23 @@ function wallUpload(input){
   const img=new Image();
   img.onerror=()=>toast('Cette image ne peut pas être utilisée');
   img.onload=()=>{
-   const scale=Math.min(1,2000/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
-   const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
-   const ctx=canvas.getContext('2d');if(!ctx){toast('Préparation de l’image impossible');return}
-   ctx.drawImage(img,0,0,w,h);
-   let data=canvas.toDataURL('image/jpeg',.8);if(data.length>1900000)data=canvas.toDataURL('image/jpeg',.66);
+   const canvas=document.createElement('canvas'),ctx=canvas.getContext('2d');if(!ctx){toast('Préparation de l’image impossible');return}
+   let max=1600,data='',ok=false;
+   while(max>=640&&!ok){
+    const scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
+    canvas.width=w;canvas.height=h;ctx.clearRect(0,0,w,h);ctx.drawImage(img,0,0,w,h);
+    for(const quality of [.82,.72,.62,.52,.42,.32]){
+     data=canvas.toDataURL('image/jpeg',quality);
+     if(data.length<=520000){ok=true;break}
+    }
+    if(!ok)max=Math.round(max*.82);
+   }
+   if(!ok){toast('Cette image est trop lourde, essaie une image plus légère');return}
    try{localStorage.setItem(WALL_KEY,data);localStorage.setItem(WALL_NAME_KEY,file.name);if(!localStorage.getItem(WALL_OP_KEY))localStorage.setItem(WALL_OP_KEY,'48')}
    catch(e){toast('Espace de stockage insuffisant sur cet appareil');return}
-   wallApply();toast('Fond d’écran appliqué ✓');
+   wallApply();
+   if(UID)wallRemoteWrite(data,file.name,wallOpacityVal(),true);
+   else toast('Fond appliqué sur cet appareil. Connecte-toi pour le synchroniser.');
   };
   img.src=reader.result;
  };
@@ -765,7 +827,7 @@ set(){return`<div class="grid g2e"><div class="cd"><h3>Profil</h3><input data-f=
   <button class="g" type="button" onclick="wallRemove()">Retirer le fond</button>
   <label class="wall-range"><span>Visibilité de l’image <b id="wallValue">${wallOpacityVal()} %</b></span><input id="wallIntensity" type="range" min="15" max="72" step="1" value="${wallOpacityVal()}" oninput="wallOpacity(this.value)"></label>
  </div>
- <div class="wall-status"><span class="wall-status-dot"></span><span id="wallName">${wallFileName()}</span><span class="mu">· Image enregistrée uniquement sur cet appareil</span></div>
+ <div class="wall-status"><span class="wall-status-dot"></span><span id="wallName">${wallFileName()}</span><span class="mu"><span id="wallSyncLabel">Synchronisation avec ton compte…</span></span></div>
  </div>
  <div class="cd" style="margin-top:14px"><h3>Mois archivés</h3>${S.hist.length?S.hist.map(s=>`<div class="r" style="--n:3;grid-template-columns:1fr 1fr 1fr 1fr"><span>${s.m}</span><span class="pos">+${eur(s.rev)}</span><span class="neg">−${eur(s.dep)}</span><span>${eur(s.ep)}</span></div>`).join(''):'<p class="mu">Aucun mois archivé pour l’instant.</p>'}</div>`}
 };
