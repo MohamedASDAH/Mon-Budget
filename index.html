@@ -1354,7 +1354,7 @@ function insight(){const T=totals(),[D,td]=dim(),c=cats(),top=c[0]?` Ta plus gro
  if(!T.rev&&!T.dep)return'Ajoute tes revenus et tes dépenses : je les analyserai à partir de tes vraies données.';
  return T.bud?`Tu as dépensé ${Math.round(T.dep/T.bud*100)} % de ton budget, il reste ${D-td} jours.${top}`:`Pense à définir des budgets pour suivre ton rythme.${top}`}
 function applyOpt(){optCalc().all.forEach(x=>x.r.budget=x.reco);go();toast('Budgets recommandés appliqués ✓')}
-function accountBalance(){if(typeof S.compteBase!=='number')return null;const since=Number(S.compteSince)||0;return r2(S.compteBase+S.log.filter(e=>Number(e.createdAt||e.t)>=since).reduce((n,e)=>n+(e.k==='rev'?1:-1)*Number(e.amt||0),0))}
+function accountBalance(){if(typeof S.compteBase!=='number')return null;const since=Number(S.compteSince)||0;return r2(S.compteBase+S.log.filter(e=>Number(e.createdAt||0)>=since).reduce((n,e)=>n+(e.k==='rev'?1:-1)*Number(e.amt||0),0))}
 function parseAccountAmount(value){const clean=String(value??'').trim().replace(/[\s\u00a0\u202f€]/g,'').replace(',','.').replace(/[^0-9.\-]/g,'');if(!clean||clean==='.'||clean==='-')return NaN;const n=Number(clean);return Number.isFinite(n)?n:NaN}
 function setAccountBase(){const el=$('accountBase'),v=parseAccountAmount(el&&el.value);if(!el||el.value.trim()===''||!Number.isFinite(v)||v<0){toast('Indique un solde valide, par exemple 1 250,50');return}S.compteBase=r2(v);S.compteSince=Date.now();go();toast('Solde du compte enregistré ✓')}
 function totals(){const rev=sum(S.rev,'amount'),fix=sum(S.fix,'amount'),vr=sum(S.var,'amount'),ep=sum(S.epa,'amount'),go=sum(S.goals,'mo'),c=S.conge;
