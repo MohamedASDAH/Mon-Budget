@@ -989,6 +989,20 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
  :root[data-theme="light"] #pg .grid.g2 > .cd.aic button:hover{background:rgba(255,255,255,.22)!important}
 }
 </style>
+<style id="ai-assistant-living-lines">
+/* Légende fidèle aux trois tracés du graphique */
+.curve-legend{--curve-line:#35dfc4}
+.curve-legend .leg-real{height:3px!important;background:var(--curve-line)!important;box-shadow:0 0 8px color-mix(in srgb,var(--curve-line) 35%,transparent)}
+.curve-legend .leg-ideal{height:0!important;border:0!important;border-top:2px dashed var(--mu)!important;opacity:.75}
+.curve-legend .leg-forecast{height:0!important;border:0!important;border-top:2px dotted var(--curve-line)!important;opacity:1}
+/* Traits lumineux animés en douceur dans l'en-tête de l'assistant */
+.aihd svg.fl path{stroke-dasharray:7 11!important;animation:assistantLineFlow 7s linear infinite,assistantLineGlow 4.5s ease-in-out infinite!important}
+.aihd svg.fl path:nth-of-type(2){animation-duration:9s,5.5s!important;animation-delay:-2s,-1s!important}
+.aihd svg.fl path:nth-of-type(3){animation-duration:11s,6s!important;animation-delay:-4s,-2s!important}
+@keyframes assistantLineFlow{to{stroke-dashoffset:-180}}
+@keyframes assistantLineGlow{0%,100%{opacity:.38}50%{opacity:.9}}
+@media(prefers-reduced-motion:reduce){.aihd svg.fl path{animation:none!important;stroke-dasharray:7 11!important}}
+</style>
 </head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
@@ -1281,7 +1295,7 @@ function bal(big){
  xl+
  '<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
  '</svg>'+
- '<div class="curve-legend"><span><i class="leg-real"></i>Solde réel</span><span><i class="leg-ideal"></i>Rythme idéal</span><span><i class="leg-forecast"></i>Projection</span></div>'+
+ '<div class="curve-legend" style="--curve-line:'+col+'"><span><i class="leg-real"></i>Solde réel · trait continu</span><span><i class="leg-ideal"></i>Rythme idéal · tirets longs</span><span><i class="leg-forecast"></i>Projection · tirets courts</span></div>'+
  '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip"></div>';
  AF.push(()=>{
   const ci=$(big?'ci':'cix'),sv=$('cs');if(!sv||!ci)return;
