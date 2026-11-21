@@ -682,7 +682,22 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
  :root[data-theme="light"] #pg .aihd,:root[data-theme="light"] #pg .aihd *{color:#17243d!important}
 }
 </style>
-</head>
+<style id="ai-suggestions-refresh">
+.sg-heading{display:flex;align-items:center;gap:11px;margin:2px 0 12px;padding:2px 1px}
+.sg-heading-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;color:#fff;background:linear-gradient(135deg,#7957e8,#29b9ad);box-shadow:0 5px 16px #7957e833}
+.sg-heading div{display:flex;flex-direction:column;gap:2px}
+.sg-heading b{font-size:14px;color:var(--tx)}
+.sg-heading small{font-size:11px;color:var(--mu)}
+.sg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 15px}
+.sg .sg-card{position:relative;min-width:0;min-height:78px;display:flex;align-items:center;gap:11px;padding:12px;background:linear-gradient(145deg,var(--cd),color-mix(in srgb,var(--ac) 5%,var(--cd)));border:1px solid var(--bd);border-radius:16px;color:var(--tx);text-align:left;box-shadow:0 5px 16px #1018280a;transition:transform .2s,border-color .2s,box-shadow .2s}
+.sg .sg-card:hover{transform:translateY(-2px);border-color:var(--ac);box-shadow:0 9px 22px #7957e81a}
+.sg .sg-icon{width:38px;height:38px;display:grid;place-items:center;flex:none;border-radius:12px;background:color-mix(in srgb,var(--ac) 13%,var(--cd));color:var(--ac)}
+.sg .sg-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:4px}
+.sg .sg-copy b{font-size:12px;line-height:1.3;font-weight:700;color:var(--tx)}
+.sg .sg-copy small{font-size:10px;line-height:1.35;color:var(--mu);font-weight:400}
+.sg .sg-arrow{font-size:16px;color:var(--mu);align-self:flex-start}
+@media(max-width:560px){.sg{grid-template-columns:1fr;gap:8px}.sg .sg-card{min-height:68px;padding:10px 12px}.sg .sg-copy b{font-size:13px}.sg .sg-copy small{font-size:11px}}
+</style></head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
 <div id="auth" class="on"></div>
@@ -1071,7 +1086,7 @@ ai(){const cv=curConv();msgs=cv.msgs;const T=totals(),n=S.set.name,mh=msgs.lengt
  AF.push(()=>{avail()});
  return`<div class="cd gl aihd"><svg class="fl" viewBox="0 0 300 120" preserveAspectRatio="none"><defs><linearGradient id="fg1"><stop offset="0" stop-color="#7957E8"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><path d="M0 20C90 20 120 60 300 40" stroke="url(#fg1)"/><path d="M0 60C100 60 130 70 300 70" stroke="#4f8cff"/><path d="M0 100C90 100 140 80 300 100" stroke="#2dd4bf"/></svg>
  <div><h2>Ton assistant financier</h2><p class="mu" style="margin:0;max-width:440px">${n?esc(n)+', je':'Je'} suis connecté à tout ton budget : ${eur(T.rev)} de revenus, ${eur(T.dep)} dépensés, ${S.goals.length} objectif${S.goals.length>1?'s':''}. Demande-moi ce que tu veux, à la voix ou au clavier.</p></div><span id="av" class="pill ${U.aiok===false?'neg':'pos'}" style="position:relative;z-index:1"><i class="dot"></i>${U.aiok===false?'Indisponible ici':U.aiok?'Disponible':'Vérification…'}</span></div>
- <div class="aig"><div><div class="sg" style="margin-top:0">${SG.map((x,i)=>`<button onclick="ask(SG[${i}][2])"><b>${ic(x[0],18)}</b>${x[1]}</button>`).join('')}</div>
+ <div class="aig"><div><div class="sg-heading"><span class="sg-heading-icon">${ic('ai',17)}</span><div><b>Suggestions pour l’IA</b><small>Choisis un sujet pour commencer</small></div></div><div class="sg">${SG.map((x,i)=>`<button class="sg-card" onclick="ask(SG[${i}][2])"><span class="sg-icon">${ic(x[0],19)}</span><span class="sg-copy"><b>${x[1]}</b><small>${['Fais le point sur tes finances','Découvre des pistes d’épargne','Trouve les dépenses à alléger','Avance vers ton projet','Vérifie ta marge disponible','Anticipe tes prochaines dépenses','Comprends tes habitudes'][i]}</small></span><span class="sg-arrow">↗</span></button>`).join('')}</div>
  <div class="cd gl chatbox"><div id="chat">${mh}</div><div id="vi" data-s="${U.vs||'idle'}"><span class="vb"><i></i><i></i><i></i><i></i><i></i></span><span class="vt">${{idle:'Prêt',listen:'Je t’écoute…',think:'Je réfléchis…',speak:'Je parle…'}[U.vs||'idle']}</span><button class="g" onclick="vstop()">■ Arrêter</button><label class="tts-toggle" title="Activer ou désactiver la lecture automatique des réponses"><input type="checkbox" ${U.tts?'checked':''} onchange="ttsT(this.checked)" aria-label="Lire automatiquement les réponses"><span class="tts-switch" aria-hidden="true"></span><span class="tts-copy"><b>🔊 Lecture vocale</b><small>${U.tts?'Activée':'Désactivée'}</small></span></label></div>
  <div id="mh"></div><div class="cmp"><button id="mic" class="${U.vs==='listen'?'on':''}" onclick="micToggle()" aria-label="Microphone">${ic('ai',20)}</button><input id="ai" data-f="u_ai" class="fi" placeholder="Parle ou écris : « Puis-je dépenser 80 € ce week-end ? »" style="flex:1" onkeydown="if(event.key==='Enter')ask()"><button class="g" onclick="U.dv=!U.dv;go()" title="Données utilisées" style="padding:9px 11px">📎</button><button onclick="ask()">Envoyer</button></div>
  ${U.dv?`<div class="note">Données que l’assistant peut lire : revenus ${eur(T.rev)} · fixes ${eur(T.fix)} · variables ${eur(T.vr)} · épargne ${eur(T.ep)} · objectifs ${S.goals.length} · transactions ${S.log.length} · mois archivés ${S.hist.length}.</div>`:''}</div></div>
@@ -1163,19 +1178,26 @@ function bestFrenchVoice(){
  const score=v=>{
   const n=(v.name+' '+v.lang).toLowerCase();let p=0;
   if(/^fr-fr$/i.test(v.lang))p+=35;
-  if(/audrey|am[eé]lie|hortense|denise|lea|léa|julie|celine|céline|marie|siri.*fr|fr.*siri/i.test(n))p+=55;
-  if(/enhanced|premium|natural|neural|online/i.test(n))p+=45;
-  if(/google|microsoft/i.test(n))p+=12;
-  if(/compact|basic/i.test(n))p-=25;
+  if(/audrey|am[eé]lie|hortense|denise|lea|léa|julie|celine|céline|marie|thomas|siri.*fr|fr.*siri/i.test(n))p+=48;
+  if(/enhanced|premium|natural|neural|online|wavenet/i.test(n))p+=65;
+  if(/google|microsoft/i.test(n))p+=18;
+  if(/compact|basic|desktop/i.test(n))p-=20;
   return p
  };
  return all.sort((a,b)=>score(b)-score(a))[0]
 }
-function speak(t){
+async function speak(t){
  if(!window.speechSynthesis||typeof SpeechSynthesisUtterance==='undefined')return toast('Voix indisponible sur cet appareil');
  stopSpeak();
+ // Certains navigateurs sur ordinateur chargent leurs voix après l’ouverture de la page.
+ if(!speechSynthesis.getVoices().length){
+  await new Promise(resolve=>{
+   let done=false;const finish=()=>{if(done)return;done=true;speechSynthesis.removeEventListener('voiceschanged',finish);resolve()};
+   speechSynthesis.addEventListener('voiceschanged',finish);setTimeout(finish,900)
+  })
+ }
  const u=new SpeechSynthesisUtterance(cleanT(t));
- u.lang='fr-FR';u.voice=bestFrenchVoice();u.rate=.94;u.pitch=1.02;u.volume=1;
+ u.lang='fr-FR';u.voice=bestFrenchVoice();u.rate=.91;u.pitch=1.04;u.volume=1;
  u.onstart=()=>setVS('speak');u.onend=u.onerror=()=>setVS('idle');
  speechSynthesis.speak(u)
 }
