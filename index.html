@@ -559,6 +559,19 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 @media(max-width:860px){body{background-attachment:scroll}.cd{border-radius:20px;backdrop-filter:blur(22px) saturate(145%);-webkit-backdrop-filter:blur(22px) saturate(145%)}.cd:active{transform:scale(.995)}#bn{box-shadow:0 -10px 34px rgba(0,0,0,.10)}}
 @media(prefers-reduced-motion:reduce){.cd,.ni,button,.curve-svg,.bar i{transition:none!important;animation:none!important}.cd:hover,.ni:hover{transform:none}}
 
+
+/* Evolution du solde — double courbe en aires, inspiration premium */
+.curve-wrap{background:linear-gradient(155deg,rgba(13,16,34,.72),rgba(17,19,40,.58));border-color:rgba(170,183,255,.14);border-radius:22px;padding:15px 14px 12px}
+.curve-wrap .curve-svg{filter:drop-shadow(0 7px 18px rgba(0,0,0,.13))}
+.curve-wrap .curve-fill{transition:opacity .55s ease}
+.curve-real-fill{opacity:.96}.curve-ideal-fill{opacity:.9}
+.curve-line{filter:drop-shadow(0 0 7px rgba(243,107,154,.42));stroke-linecap:round;stroke-linejoin:round}
+.curve-wrap .curve-projection{stroke:#b7c2ff!important;stroke-width:2.2!important;stroke-dasharray:none!important;opacity:.9;filter:drop-shadow(0 0 7px rgba(130,151,255,.48))}
+.curve-legend .leg-real{height:3px!important;background:linear-gradient(90deg,#ff8bb1,#e75d91)!important;box-shadow:0 0 9px rgba(243,107,154,.5)}
+.curve-legend .leg-ideal{height:3px!important;border:0!important;background:linear-gradient(90deg,#a8b6ff,#7189ff)!important;opacity:1}
+.curve-legend .leg-forecast{height:0!important;border:0!important;border-top:2px solid #b7c2ff!important;opacity:.95;box-shadow:0 0 8px rgba(130,151,255,.4)}
+:root[data-theme=light] .curve-wrap{background:linear-gradient(155deg,rgba(248,249,255,.94),rgba(235,239,252,.84));border-color:rgba(108,123,180,.18)}
+@media(max-width:860px){.curve-wrap{padding:11px 7px 9px;border-radius:18px}}
 </style>
 
 <style id="light-mode-contrast-fix">
@@ -1346,6 +1359,8 @@ function bal(big){
   return(i===0?'M'+p1.x.toFixed(2)+' '+p1.y.toFixed(2):'')+' C'+c1.x.toFixed(2)+' '+c1.y.toFixed(2)+' '+c2.x.toFixed(2)+' '+c2.y.toFixed(2)+' '+p2.x.toFixed(2)+' '+p2.y.toFixed(2);
  }).join(' ');
  const area=line+' L'+X(td).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
+ const idealLine='M'+X(0).toFixed(2)+' '+Y(start).toFixed(2)+' C'+X(D*.32).toFixed(2)+' '+Y(start+(end-start)*.28).toFixed(2)+' '+X(D*.68).toFixed(2)+' '+Y(start+(end-start)*.72).toFixed(2)+' '+X(D).toFixed(2)+' '+Y(end).toFixed(2);
+ const idealArea=idealLine+' L'+X(D).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
  const fmt=v=>new Intl.NumberFormat('fr-FR',{notation:'compact',maximumFractionDigits:1}).format(v)+' €';
  const grid=Array.from({length:5},(_,i)=>{const v=hi-(hi-lo)*i/4,yy=Y(v);return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="var(--mu)" stroke-opacity="'+(i===4?'.20':'.12')+'" stroke-dasharray="'+(i===4?'none':'3 7')+'"/><text x="'+(L-10)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="var(--mu)" opacity=".8">'+fmt(v)+'</text>'}).join('');
  const days=[...new Set([1,5,10,15,20,25,D].filter(d=>d<=D))];
@@ -1360,17 +1375,20 @@ function bal(big){
  '<div class="curve-topline"><span class="curve-period">'+mn+' '+y+'</span><span class="curve-status"><i style="background:'+col+'"></i>'+(good?'Dans le rythme':'Au-dessus du rythme')+'</span></div>'+
  '<svg id="cs" class="curve-svg" viewBox="0 0 '+W+' '+H+'" role="img" tabindex="0" aria-label="Évolution du solde sur le mois. Utilise les flèches gauche et droite pour parcourir les jours.">'+
  '<defs>'+
- '<linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity=".30"/><stop offset="55%" stop-color="'+col+'" stop-opacity=".09"/><stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient>'+
+ '<linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f36b9a" stop-opacity=".78"/><stop offset="58%" stop-color="#b64c83" stop-opacity=".35"/><stop offset="100%" stop-color="#b64c83" stop-opacity=".015"/></linearGradient>'+ 
+ '<linearGradient id="curveIdealArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8297ff" stop-opacity=".68"/><stop offset="62%" stop-color="#6576d8" stop-opacity=".30"/><stop offset="100%" stop-color="#6576d8" stop-opacity=".015"/></linearGradient>'+ 
+ '<linearGradient id="curveIdealStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#a8b6ff"/><stop offset="100%" stop-color="#7189ff"/></linearGradient>'+
  '<linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="55%" stop-color="'+col+'"/><stop offset="100%" stop-color="'+light+'"/></linearGradient>'+
  '<radialGradient id="curvePoint"><stop offset="0%" stop-color="'+light+'" stop-opacity=".95"/><stop offset="100%" stop-color="'+col+'" stop-opacity=".15"/></radialGradient>'+
  '<filter id="curveGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
  '</defs>'+
  grid+
- '<path d="M'+L+' '+Y(start).toFixed(2)+' L'+(W-R)+' '+Y(end).toFixed(2)+'" fill="none" stroke="var(--mu)" stroke-opacity=".34" stroke-width="1.2"/>'+
- '<path d="'+area+'" fill="url(#curveArea)" class="curve-fill"/>'+
+ '<path d="'+idealArea+'" fill="url(#curveIdealArea)" class="curve-fill curve-ideal-fill"/>'+ 
+ '<path d="'+idealLine+'" fill="none" stroke="url(#curveIdealStroke)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>'+
+ '<path d="'+area+'" fill="url(#curveArea)" class="curve-fill curve-real-fill"/>'+
  '<path d="'+projectionPath+'" class="curve-projection" fill="none" stroke="'+col+'" stroke-width="2.8" stroke-linecap="round" opacity=".82"/>'+
- '<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".20" filter="url(#curveGlow)" vector-effect="non-scaling-stroke"/>'+
- '<path d="'+line+'" class="curve-line" pathLength="1" fill="none" stroke="url(#curveStroke)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
+ '<path d="'+line+'" fill="none" stroke="#f36b9a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".22" filter="url(#curveGlow)" vector-effect="non-scaling-stroke"/>'+
+ '<path d="'+line+'" class="curve-line" pathLength="1" fill="none" stroke="#f47aa5" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
  marks+
  '<line id="todayGuide" x1="'+todayX.toFixed(2)+'" y1="'+Tp+'" x2="'+todayX.toFixed(2)+'" y2="'+bs+'" stroke="'+col+'" stroke-width="1.2" opacity=".38"/>'+
  '<circle id="todayHalo" cx="'+todayX.toFixed(2)+'" cy="'+actualEnd.toFixed(2)+'" r="12" fill="url(#curvePoint)" opacity=".55"/>'+
@@ -1379,7 +1397,7 @@ function bal(big){
  xl+
  '<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
  '</svg>'+
- '<div class="curve-legend" style="--curve-line:'+col+'"><span><i class="leg-real"></i>Solde réel · continu</span><span><i class="leg-ideal"></i>Rythme idéal · fin</span><span><i class="leg-forecast"></i>Projection · animée</span></div>'+
+ '<div class="curve-legend"><span><i class="leg-real"></i>Solde réel</span><span><i class="leg-ideal"></i>Rythme idéal</span><span><i class="leg-forecast"></i>Projection</span></div>'+
  '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip"></div>';
  AF.push(()=>{
   const ci=$(big?'ci':'cix'),sv=$('cs');if(!sv||!ci)return;
