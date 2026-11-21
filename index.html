@@ -1049,9 +1049,12 @@ const SUPA_KEY="sb_publishable_Uzprg-XhLHZdUY4m25rvQQ_JHIl3314";
 const $=i=>document.getElementById(i),KEY='budget_v1',id=()=>Math.random().toString(36).slice(2,8);
 const L=a=>a.map(l=>({id:id(),label:l,budget:0,amount:0,min:0}));
 const mk=d=>{d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')};
-const def=()=>({log:[],hist:[],abo:[],goals:[],set:{name:''},month:mk(),solde:0,conge:{dispo:0,acquis:2.08,pris:0},rev:L(['Salaire (€)','Revenu e-commerce','Prime']),fix:L(['Salle de sport','Spotify','Banque','Frais d’engagement','Téléphonie','Assurance','Internet']),var:L(['Courses','Panier repas','Dépense diverse','Essence','Déplacement']),epa:L(['Enveloppe','Livret durable','Bonus de fin de mois'])});
+const def=()=>({log:[],hist:[],abo:[],goals:[],set:{name:''},month:mk(),solde:0,conge:{dispo:0,acquis:0,pris:0},rev:L(['Salaire (€)','Revenu e-commerce','Prime']),fix:L(['Salle de sport','Spotify','Banque','Frais d’engagement','Téléphonie','Assurance','Internet']),var:L(['Courses','Panier repas','Dépense diverse','Essence','Déplacement']),epa:L(['Enveloppe','Livret durable','Bonus de fin de mois'])});
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 function norm(){if(!S||!S.rev)S=def();
+// Migration: remove the old automatic 2.08-day default; keep any other user-entered value.
+if(S.conge&&Number(S.conge.acquis)===2.08)S.conge.acquis=0;
+if(S.conge&&!Number.isFinite(Number(S.conge.acquis)))S.conge.acquis=0;
 if(!S.log){S.log=[];for(const k of['fix','var'])for(const r of S[k])if(r.amount)S.log.push({id:id(),t:Date.now(),k,rid:r.id,label:r.label,amt:r.amount,note:'report'})}
 S.abo=S.abo||[];(S.goals||[]).forEach(g=>{g.mo=g.mo||0;g.items=g.items||[];g.type=g.type||'cust';g.monthly=g.monthly||0;g.q=g.q||{}});S.goals=S.goals||[];S.hist=S.hist||[];S.set=S.set||{name:''};S.month=S.month||mk()}
 let UID=null,DB=null,ME=null,IS_OWNER=false,LOCAL=false,DEL=false,syncT=null,lastJ='',lastC='',SY='local',errShown=0;
