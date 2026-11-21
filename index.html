@@ -1003,6 +1003,22 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
 @keyframes assistantLineGlow{0%,100%{opacity:.38}50%{opacity:.9}}
 @media(prefers-reduced-motion:reduce){.aihd svg.fl path{animation:none!important;stroke-dasharray:7 11!important}}
 </style>
+<style id="ai-assistant-smooth-living-lines">
+/* Traits continus avec un reflet lumineux qui circule */
+.aihd svg.fl path{
+ stroke-dasharray:none!important;
+ stroke-dashoffset:0!important;
+ animation:assistantSmoothGlow 3.8s ease-in-out infinite!important;
+ filter:drop-shadow(0 0 2px currentColor);
+}
+.aihd svg.fl path:nth-of-type(2){animation-delay:-1.25s!important;animation-duration:4.6s!important}
+.aihd svg.fl path:nth-of-type(3){animation-delay:-2.1s!important;animation-duration:5.2s!important}
+@keyframes assistantSmoothGlow{
+ 0%,100%{opacity:.22;stroke-width:1.5;filter:drop-shadow(0 0 1px currentColor)}
+ 50%{opacity:.78;stroke-width:2.5;filter:drop-shadow(0 0 7px currentColor)}
+}
+@media(prefers-reduced-motion:reduce){.aihd svg.fl path{animation:none!important;opacity:.45!important;filter:none!important}}
+</style>
 </head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
