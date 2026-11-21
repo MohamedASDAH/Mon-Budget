@@ -406,9 +406,12 @@ main{z-index:2}
 @keyframes curveDraw{to{stroke-dashoffset:0}}
 @keyframes curveFillIn{from{opacity:0}to{opacity:1}}
 #pg.ani .curve-line{stroke-dasharray:1;stroke-dashoffset:1;animation:curveDraw 1.35s cubic-bezier(.2,.8,.2,1) .08s forwards}
-.curve-line{filter:drop-shadow(0 0 3px color-mix(in srgb,var(--curve-line,#35dfc4) 34%,transparent))}
-.curve-projection{animation:curveProjection 3.8s ease-in-out infinite;transform-origin:center}
-@keyframes curveProjection{0%,100%{opacity:.52;filter:drop-shadow(0 0 1px currentColor)}50%{opacity:1;filter:drop-shadow(0 0 5px currentColor)}}
+.curve-line{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--curve-line,#35dfc4) 42%,transparent));stroke-linecap:round;stroke-linejoin:round}
+.curve-projection{animation:curveProjection 4.6s cubic-bezier(.4,0,.2,1) infinite;transform-origin:center;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 4px color-mix(in srgb,var(--curve-line,#35dfc4) 38%,transparent))}
+@keyframes curveProjection{0%,100%{opacity:.48;filter:drop-shadow(0 0 2px currentColor)}50%{opacity:.96;filter:drop-shadow(0 0 8px currentColor)}}
+.curve-wrap{background:radial-gradient(ellipse at 52% 8%,color-mix(in srgb,var(--curve-line,#35dfc4) 8%,transparent),transparent 62%),linear-gradient(145deg,rgba(5,12,29,.34),rgba(255,255,255,.025))}
+.curve-svg .curve-fill{transition:opacity .5s ease}
+.curve-event{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--curve-line,#35dfc4) 55%,transparent))}
 .curve-status{backdrop-filter:blur(8px)}
 .curve-topline{padding:2px 2px 5px}
 
@@ -1307,6 +1310,7 @@ function bal(big){
  const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10" fill="var(--mu)">'+d+'</text>').join('');
  const marks=P.filter(p=>p.d>0&&per[p.d]>0).map(p=>'<circle cx="'+X(p.d).toFixed(2)+'" cy="'+Y(p.v).toFixed(2)+'" r="3.1" fill="'+col+'" stroke="var(--cd)" stroke-width="1.5" class="curve-event"/>').join('');
  const actualEnd=Y(b),todayX=X(td),projectX=X(D),projectY=Y(proj);
+ const projectionPath='M'+todayX.toFixed(2)+' '+actualEnd.toFixed(2)+' C'+(todayX+(projectX-todayX)*.32).toFixed(2)+' '+(actualEnd+(projectY-actualEnd)*.28-7).toFixed(2)+' '+(todayX+(projectX-todayX)*.68).toFixed(2)+' '+(actualEnd+(projectY-actualEnd)*.72-7).toFixed(2)+' '+projectX.toFixed(2)+' '+projectY.toFixed(2);
  const dayLeft=D-td+1;
  const summary=big?'<div class="stat curve-stats"><div><small>Solde actuel</small><b>'+eur(b)+'</b></div><div><small>Fin de mois estimée</small><b class="'+cls(proj)+'">'+eur(proj)+'</b></div><div><small>Moyenne dépensée / jour</small><b>'+eur(spent/td)+'</b></div><div><small>Disponible / jour restant</small><b>'+eur(Math.max(0,T.rest)/dayLeft)+'</b></div></div>':'';
  const html=summary+
@@ -1322,7 +1326,7 @@ function bal(big){
  grid+
  '<path d="M'+L+' '+Y(start).toFixed(2)+' L'+(W-R)+' '+Y(end).toFixed(2)+'" fill="none" stroke="var(--mu)" stroke-opacity=".34" stroke-width="1.2"/>'+
  '<path d="'+area+'" fill="url(#curveArea)" class="curve-fill"/>'+
- '<path d="M'+todayX.toFixed(2)+' '+actualEnd.toFixed(2)+' L'+projectX.toFixed(2)+' '+projectY.toFixed(2)+'" class="curve-projection" fill="none" stroke="'+col+'" stroke-width="2.4" stroke-linecap="round" opacity=".82"/>'+
+ '<path d="'+projectionPath+'" class="curve-projection" fill="none" stroke="'+col+'" stroke-width="2.8" stroke-linecap="round" opacity=".82"/>'+
  '<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".20" filter="url(#curveGlow)" vector-effect="non-scaling-stroke"/>'+
  '<path d="'+line+'" class="curve-line" pathLength="1" fill="none" stroke="url(#curveStroke)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
  marks+
