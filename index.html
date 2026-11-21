@@ -572,6 +572,23 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .curve-legend .leg-forecast{height:0!important;border:0!important;border-top:2px solid #b7c2ff!important;opacity:.95;box-shadow:0 0 8px rgba(130,151,255,.4)}
 :root[data-theme=light] .curve-wrap{background:linear-gradient(155deg,rgba(248,249,255,.94),rgba(235,239,252,.84));border-color:rgba(108,123,180,.18)}
 @media(max-width:860px){.curve-wrap{padding:11px 7px 9px;border-radius:18px}}
+
+/* Légende et tracés accordés aux séries du graphique */
+.curve-legend{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px 22px;margin:12px 4px 2px;color:var(--mu);font-size:11px}
+.curve-legend span{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.curve-legend i{display:inline-block;width:19px;height:3px;border-radius:9px;flex:0 0 19px}
+.curve-legend .leg-real{background:linear-gradient(90deg,#ff8bb1,#e75d91);box-shadow:0 0 8px rgba(243,107,154,.45)}
+.curve-legend .leg-ideal{background:linear-gradient(90deg,#a8b6ff,#7189ff);box-shadow:0 0 7px rgba(130,151,255,.38)}
+.curve-legend .leg-forecast{height:2px;background:linear-gradient(90deg,#42d6c5,#91f2e5);box-shadow:0 0 8px rgba(66,214,197,.45)}
+.curve-wrap .curve-projection{stroke:#42d6c5!important;stroke-width:2.8!important;stroke-dasharray:none!important;opacity:.96;filter:drop-shadow(0 0 7px rgba(66,214,197,.42))}
+.curve-wrap .curve-real-fill{opacity:.9}
+.curve-wrap .curve-ideal-fill{opacity:.76}
+.curve-wrap .curve-svg text{font-variant-numeric:tabular-nums}
+:root[data-theme=light] .curve-legend{color:#65708b}
+:root[data-theme=light] .curve-legend .leg-real{box-shadow:none}
+:root[data-theme=light] .curve-legend .leg-ideal{box-shadow:none}
+:root[data-theme=light] .curve-legend .leg-forecast{box-shadow:none}
+@media(max-width:560px){.curve-legend{gap:9px 13px;font-size:10px}.curve-legend i{width:15px;flex-basis:15px}}
 </style>
 
 <style id="light-mode-contrast-fix">
@@ -1362,7 +1379,7 @@ function bal(big){
  const idealLine='M'+X(0).toFixed(2)+' '+Y(start).toFixed(2)+' C'+X(D*.32).toFixed(2)+' '+Y(start+(end-start)*.28).toFixed(2)+' '+X(D*.68).toFixed(2)+' '+Y(start+(end-start)*.72).toFixed(2)+' '+X(D).toFixed(2)+' '+Y(end).toFixed(2);
  const idealArea=idealLine+' L'+X(D).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
  const fmt=v=>new Intl.NumberFormat('fr-FR',{notation:'compact',maximumFractionDigits:1}).format(v)+' €';
- const grid=Array.from({length:5},(_,i)=>{const v=hi-(hi-lo)*i/4,yy=Y(v);return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="var(--mu)" stroke-opacity="'+(i===4?'.20':'.12')+'" stroke-dasharray="'+(i===4?'none':'3 7')+'"/><text x="'+(L-10)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="var(--mu)" opacity=".8">'+fmt(v)+'</text>'}).join('');
+ const grid=Array.from({length:5},(_,i)=>{const v=hi-(hi-lo)*i/4,yy=Y(v);return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="var(--mu)" stroke-opacity="'+(i===4?'.20':'.12')+'" stroke-dasharray="none"/><text x="'+(L-10)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="var(--mu)" opacity=".8">'+fmt(v)+'</text>'}).join('');
  const days=[...new Set([1,5,10,15,20,25,D].filter(d=>d<=D))];
  const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10" fill="var(--mu)">'+d+'</text>').join('');
  const marks=P.filter(p=>p.d>0&&per[p.d]>0).map(p=>'<circle cx="'+X(p.d).toFixed(2)+'" cy="'+Y(p.v).toFixed(2)+'" r="3.1" fill="'+col+'" stroke="var(--cd)" stroke-width="1.5" class="curve-event"/>').join('');
@@ -1386,18 +1403,18 @@ function bal(big){
  '<path d="'+idealArea+'" fill="url(#curveIdealArea)" class="curve-fill curve-ideal-fill"/>'+ 
  '<path d="'+idealLine+'" fill="none" stroke="url(#curveIdealStroke)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>'+
  '<path d="'+area+'" fill="url(#curveArea)" class="curve-fill curve-real-fill"/>'+
- '<path d="'+projectionPath+'" class="curve-projection" fill="none" stroke="'+col+'" stroke-width="2.8" stroke-linecap="round" opacity=".82"/>'+
+ '<path d="'+projectionPath+'" class="curve-projection" fill="none" stroke="#42d6c5" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" opacity=".96"/>'+
  '<path d="'+line+'" fill="none" stroke="#f36b9a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".22" filter="url(#curveGlow)" vector-effect="non-scaling-stroke"/>'+
  '<path d="'+line+'" class="curve-line" pathLength="1" fill="none" stroke="#f47aa5" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
  marks+
  '<line id="todayGuide" x1="'+todayX.toFixed(2)+'" y1="'+Tp+'" x2="'+todayX.toFixed(2)+'" y2="'+bs+'" stroke="'+col+'" stroke-width="1.2" opacity=".38"/>'+
  '<circle id="todayHalo" cx="'+todayX.toFixed(2)+'" cy="'+actualEnd.toFixed(2)+'" r="12" fill="url(#curvePoint)" opacity=".55"/>'+
  '<circle id="todayDot" cx="'+todayX.toFixed(2)+'" cy="'+actualEnd.toFixed(2)+'" r="5.2" fill="'+col+'" stroke="var(--cd)" stroke-width="2.5"/>'+
- '<circle cx="'+projectX.toFixed(2)+'" cy="'+projectY.toFixed(2)+'" r="4" fill="var(--cd)" stroke="'+col+'" stroke-width="2.2"/>'+
+ '<circle cx="'+projectX.toFixed(2)+'" cy="'+projectY.toFixed(2)+'" r="4.2" fill="#42d6c5" stroke="var(--cd)" stroke-width="2.2"/>'+
  xl+
  '<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
  '</svg>'+
- '<div class="curve-legend"><span><i class="leg-real"></i>Solde réel</span><span><i class="leg-ideal"></i>Rythme idéal</span><span><i class="leg-forecast"></i>Projection</span></div>'+
+ '<div class="curve-legend" aria-label="Légende du graphique"><span title="Solde calculé à partir des transactions enregistrées"><i class="leg-real"></i>Solde réel</span><span title="Trajectoire régulière pour respecter le budget prévu"><i class="leg-ideal"></i>Trajectoire cible</span><span title="Estimation du solde à la fin du mois selon le rythme actuel"><i class="leg-forecast"></i>Fin de mois estimée</span></div>'+
  '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip"></div>';
  AF.push(()=>{
   const ci=$(big?'ci':'cix'),sv=$('cs');if(!sv||!ci)return;
