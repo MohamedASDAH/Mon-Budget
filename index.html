@@ -1448,11 +1448,11 @@ function bal(big){
  });
  return{html,proj,spent:spent/td}
 }
-function txList(n,filter){let a=[...S.log].sort((x,y)=>y.t-x.t);
+function txList(n,filter){let a=[...S.log].sort((x,y)=>(filter?Number(y.t||0):Number(y.createdAt||y.t||0))-(filter?Number(x.t||0):Number(x.createdAt||0)));
  if(filter){const q=U.q.toLowerCase(),mn=num(U.min),sn=U.since?new Date(U.since).getTime():0;a=a.filter(e=>(U.ty==='all'||(U.ty==='rev')===(e.k==='rev'))&&(!q||((e.desc||'')+e.label).toLowerCase().includes(q))&&(!mn||e.amt>=mn)&&(!sn||e.t>=sn))}
  if(n)a=a.slice(0,n);if(!a.length)return'<p class="mu">Aucune transaction.</p>';
- return a.map(e=>{const rv=e.k==='rev',d=new Date(e.t).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
-  return`<div class="tx"><div class="ti">${rv?'↑':'↓'}</div><div class="tn"><div>${esc(e.desc||e.label)}</div><small>${d} · ${esc(e.label)}</small></div>${filter?`<input data-f="tx_${e.id}" inputmode="decimal" value="${e.amt}" onchange="editTx('${e.id}',this.value)">`:`<b class="${rv?'pos':'neg'}">${rv?'+':'−'}${eur(Math.abs(e.amt))}</b>`}${filter?`<button class="x" onclick="undo('${e.id}')">×</button>`:''}</div>`}).join('')}
+ return a.map(e=>{const rv=e.k==='rev',credit=rv?Number(e.amt)>=0:Number(e.amt)<0,d=new Date(e.t).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
+  return`<div class="tx"><div class="ti">${credit?'↑':'↓'}</div><div class="tn"><div>${esc(e.desc||e.label)}</div><small>${d} · ${esc(e.label)}</small></div>${filter?`<input data-f="tx_${e.id}" inputmode="decimal" value="${e.amt}" onchange="editTx('${e.id}',this.value)">`:`<b class="${credit?'pos':'neg'}">${credit?'+':'−'}${eur(Math.abs(e.amt))}</b>`}${filter?`<button class="x" onclick="undo('${e.id}')">×</button>`:''}</div>`}).join('')}
 function editTx(i,v){const e=S.log.find(x=>x.id===i),r=[...S.fix,...S.var,...S.rev].find(x=>x.id===e.rid),n=num(v);if(r)r.amount=r2(r.amount+n-e.amt);e.amt=n;go()}
 function undo(i){const e=S.log.find(x=>x.id===i);if(!e)return;const r=[...S.fix,...S.var,...S.rev].find(x=>x.id===e.rid);if(r)r.amount=r2(r.amount-e.amt);S.log=S.log.filter(x=>x.id!==i);go()}
 function addExpense(k,i){const r=S[k].find(x=>x.id===i),el=$('add_'+k+'_'+i),v=num(el&&el.value);if(!r||!v||v<0){toast('Indique un montant valide');return}r.amount=r2((r.amount||0)+v);logAdd(k,r,v,'',r.label,Date.now());go();toast('Dépense ajoutée ✓')}
@@ -1461,14 +1461,13 @@ function addTx(){const n=$('tn').value.trim(),v=num($('ta').value),choice=$('tc'
  if(k==='rev'){r=S.rev.find(x=>x.label.toLowerCase()===cat.toLowerCase());if(!r){r={id:id(),label:cat,budget:0,amount:0,min:0};S.rev.push(r)}}
  else{const f=findCat(cat);if(f){k=f[0];r=f[1]}else{r={id:id(),label:cat,budget:0,amount:0,min:0};S[k].push(r)}}
  r.amount=r2(r.amount+v);logAdd(k,r,v,'',n||cat,t);go();toast('Transaction ajoutée ✓')}
-function ed(k,i,f,v){const r=S[k].find(r=>r.id===i);if(f==='amount'&&(k==='fix'||k==='var')&&v!==r.amount){const d=r2(v-r.amount),l=S.log[S.log.length-1];
- if(l&&l.note==='modif'&&l.rid===r.id&&Date.now()-l.t<20000){l.amt=r2(l.amt+d);l.t=Date.now();if(l.amt===0)S.log.pop()}else logAdd(k,r,d,'modif')}r[f]=v;go()}
+function ed(k,i,f,v){const r=S[k].find(r=>r.id===i);if(!r)return;if(f==='amount'&&['fix','var','rev'].includes(k)){const d=r2(num(v)-num(r.amount));if(d)logAdd(k,r,d,'modif',d<0?'Correction du montant · '+r.label:r.label,Date.now())}r[f]=v;go()}
 function del(k,i){S[k]=S[k].filter(r=>r.id!==i);go()}
 function addRow(k){const e=$('n_'+k),n=e.value.trim();if(!n){e.focus();return}S[k].push({id:id(),label:n,budget:0,amount:0,min:0,freq:'Mensuel',day:1});go();const x=$('n_'+k);x&&x.focus()}
 const REV_CATEGORIES=['Salaire','Prime','Heures supplémentaires','Aides et allocations','Revenus indépendants','Vente / revenus complémentaires','Revenus locatifs','Remboursement','Pension alimentaire','Autres revenus'];
 const FQ={Mensuel:1,Annuel:1/12,Hebdo:52/12};
 function nextPay(a){const n=new Date(),d=Math.min(28,Math.max(1,a.day||1));if(a.freq==='Hebdo')return{dt:new Date(n.getTime()+864e5),j:1};let t=new Date(n.getFullYear(),n.getMonth(),d);if(t<new Date(n.getFullYear(),n.getMonth(),n.getDate()))t=new Date(n.getFullYear(),n.getMonth()+1,d);return{dt:t,j:Math.round((t-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/864e5)}}
-function rows(k,cols,ph){const I=(r,f)=>`<input data-f="${k}_${r.id}_${f}" inputmode="decimal" autocomplete="off" value="${r[f]||''}" placeholder="0" oninput="ed('${k}','${r.id}','${f}',num(this.value))">`;
+function rows(k,cols,ph){const I=(r,f)=>`<input data-f="${k}_${r.id}_${f}" inputmode="decimal" autocomplete="off" value="${r[f]||''}" placeholder="0" onchange="ed('${k}','${r.id}','${f}',num(this.value))">`;
  let h=`<div style="--n:${cols.length}"><div class="r hd2" style="--n:${cols.length}"><span>Motif</span>${cols.map(c=>`<span>${c[1]}</span>`).join('')}<span></span></div>`;
  for(const r of S[k]){h+=`<div class="r" style="--n:${cols.length}"><div class="c"><input data-f="${k}_${r.id}_l" value="${esc(r.label)}" oninput="ed('${k}','${r.id}','label',this.value)"></div>`;
   for(const[f,l,t]of cols){const lb=`data-l="${l}"`;
