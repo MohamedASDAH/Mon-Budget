@@ -623,6 +623,42 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
 :root[data-theme="light"] #vi .tts-copy b{color:#263451!important}
 @media(max-width:520px){#vi .tts-toggle{margin-left:0;width:100%;justify-content:flex-start}#vi .tts-copy{flex:1}}
 </style>
+<style id="light-mode-final-override">
+/* Contraste clair uniforme : texte, cartes, navigation et contrôles */
+:root[data-theme="light"] body,
+:root[data-theme="light"] #app,
+:root[data-theme="light"] #pg{color:#17243d!important}
+:root[data-theme="light"] #pg :is(h1,h2,h3,h4,h5,p,li,dt,dd,label,legend,th,td,b,strong,em,small,span,a,div){text-shadow:none}
+:root[data-theme="light"] #pg :is(h1,h2,h3,h4,h5,p,li,dt,dd,label,legend,th,td,b,strong,em,span,a){color:#17243d}
+:root[data-theme="light"] #pg :is(.mu,.muted,.hint,.sub,.desc,.gt,.sidebar-tagline,.profile-copy small,.label-sub,small){color:#586782!important;opacity:1!important}
+:root[data-theme="light"] #pg :is(.cd,.kp,.curve-wrap,.chatbox,.acard,.note,.ti,.stat,.bar,.seg){color:#17243d!important}
+:root[data-theme="light"] #pg :is(input,select,textarea,.fi){background:#fff!important;color:#17243d!important;border:1px solid #c6d0e1!important}
+:root[data-theme="light"] #pg input::placeholder,:root[data-theme="light"] #pg textarea::placeholder{color:#77849b!important;opacity:1!important}
+:root[data-theme="light"] #pg button:not(.p):not(.primary):not(.auth-submit){color:#263653!important}
+:root[data-theme="light"] #pg button.p,:root[data-theme="light"] #pg button.primary,:root[data-theme="light"] #pg .p{color:#fff!important}
+:root[data-theme="light"] #pg :is(.pos,.positive,.success,.green){color:#087647!important}
+:root[data-theme="light"] #pg :is(.neg,.negative,.danger,.red){color:#b42332!important}
+:root[data-theme="light"] #pg .hero,:root[data-theme="light"] #pg .hero *,
+:root[data-theme="light"] #pg .aic,:root[data-theme="light"] #pg .aic *{color:#fff!important}
+:root[data-theme="light"] #pg .aihd,:root[data-theme="light"] #pg .aihd *{color:#1b2944!important}
+:root[data-theme="light"] #pg .aihd .mu{color:#5a6882!important}
+/* Navigation et éléments secondaires */
+:root[data-theme="light"] #sb,:root[data-theme="light"] #bn{color:#263653!important}
+:root[data-theme="light"] #sb :is(span,b,small,button){color:#263653!important}
+:root[data-theme="light"] #sb .ni.on,:root[data-theme="light"] #sb .ni.on *{color:#5036b4!important}
+:root[data-theme="light"] #bn button{color:#465571!important}
+:root[data-theme="light"] #bn button.on{color:#5036b4!important}
+/* En-tête de l'assistant : courbes discrètes, propres et moins chargées */
+.aihd{isolation:isolate;min-height:116px;padding:20px 22px!important;border-radius:20px!important;background:linear-gradient(125deg,rgba(255,255,255,.075),rgba(255,255,255,.025))!important}
+.aihd:before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 88% 15%,rgba(45,212,191,.13),transparent 42%),radial-gradient(ellipse at 72% 100%,rgba(121,87,232,.12),transparent 48%)}
+.aihd svg.fl{width:42%!important;opacity:.28!important;mask-image:linear-gradient(90deg,transparent,#000 28%)}
+.aihd svg.fl path{stroke-width:1.5!important;stroke-dasharray:none!important;animation:none!important;opacity:.7}
+.aihd>div{max-width:68%;z-index:2}
+.aihd h2{font-size:clamp(19px,2vw,23px)!important;letter-spacing:-.65px!important}
+.aihd p{line-height:1.55!important;font-size:13px!important}
+@media(max-width:600px){.aihd{padding:17px!important;min-height:unset}.aihd>div{max-width:100%}.aihd svg.fl{width:65%!important;opacity:.16!important}.aihd h2{font-size:19px!important}}
+@media(prefers-reduced-motion:reduce){.aihd svg.fl path{animation:none!important}}
+</style>
 </head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
