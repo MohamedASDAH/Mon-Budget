@@ -606,6 +606,23 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
 :root[data-theme="light"] #pg .aihd *{color:#17213b!important;text-shadow:none!important}
 :root[data-theme="light"] #pg .aihd .pill{color:#087c50!important;background:#e5f7ef!important;border-color:#b9e8d1!important}
 </style>
+<style id="ai-tts-toggle-design">
+#vi{flex-wrap:wrap;gap:10px}
+#vi .tts-toggle{margin-left:auto;display:inline-flex;align-items:center;gap:9px;padding:8px 11px;border:1px solid var(--bd);border-radius:14px;background:var(--in);cursor:pointer;user-select:none;transition:background .2s,border-color .2s,transform .2s}
+#vi .tts-toggle:hover{border-color:var(--ac);transform:translateY(-1px)}
+#vi .tts-toggle input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+#vi .tts-switch{width:38px;height:22px;flex:none;border-radius:99px;background:#8992a5;position:relative;transition:background .2s}
+#vi .tts-switch:after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:transform .2s}
+#vi .tts-toggle input:checked+.tts-switch{background:linear-gradient(110deg,#7050df,#20b9a8)}
+#vi .tts-toggle input:checked+.tts-switch:after{transform:translateX(16px)}
+#vi .tts-toggle input:focus-visible+.tts-switch{outline:3px solid color-mix(in srgb,var(--ac) 40%,transparent);outline-offset:3px}
+#vi .tts-copy{display:flex;flex-direction:column;gap:2px;line-height:1.2}
+#vi .tts-copy b{font-size:12px;color:var(--tx)!important;font-weight:700}
+#vi .tts-copy small{font-size:10px;color:var(--mu)!important}
+:root[data-theme="light"] #vi .tts-toggle{background:#f1f3fa;border-color:#d5dbea}
+:root[data-theme="light"] #vi .tts-copy b{color:#263451!important}
+@media(max-width:520px){#vi .tts-toggle{margin-left:0;width:100%;justify-content:flex-start}#vi .tts-copy{flex:1}}
+</style>
 </head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
@@ -996,7 +1013,7 @@ ai(){const cv=curConv();msgs=cv.msgs;const T=totals(),n=S.set.name,mh=msgs.lengt
  return`<div class="cd gl aihd"><svg class="fl" viewBox="0 0 300 120" preserveAspectRatio="none"><defs><linearGradient id="fg1"><stop offset="0" stop-color="#7957E8"/><stop offset="1" stop-color="#2dd4bf"/></linearGradient></defs><path d="M0 20C90 20 120 60 300 40" stroke="url(#fg1)"/><path d="M0 60C100 60 130 70 300 70" stroke="#4f8cff"/><path d="M0 100C90 100 140 80 300 100" stroke="#2dd4bf"/></svg>
  <div><h2>Ton assistant financier</h2><p class="mu" style="margin:0;max-width:440px">${n?esc(n)+', je':'Je'} suis connecté à tout ton budget : ${eur(T.rev)} de revenus, ${eur(T.dep)} dépensés, ${S.goals.length} objectif${S.goals.length>1?'s':''}. Demande-moi ce que tu veux, à la voix ou au clavier.</p></div><span id="av" class="pill ${U.aiok===false?'neg':'pos'}" style="position:relative;z-index:1"><i class="dot"></i>${U.aiok===false?'Indisponible ici':U.aiok?'Disponible':'Vérification…'}</span></div>
  <div class="aig"><div><div class="sg" style="margin-top:0">${SG.map((x,i)=>`<button onclick="ask(SG[${i}][2])"><b>${ic(x[0],18)}</b>${x[1]}</button>`).join('')}</div>
- <div class="cd gl chatbox"><div id="chat">${mh}</div><div id="vi" data-s="${U.vs||'idle'}"><span class="vb"><i></i><i></i><i></i><i></i><i></i></span><span class="vt">${{idle:'Prêt',listen:'Je t’écoute…',think:'Je réfléchis…',speak:'Je parle…'}[U.vs||'idle']}</span><button class="g" onclick="vstop()">■ Arrêter</button><label style="margin-left:auto;cursor:pointer"><input type="checkbox" ${U.tts?'checked':''} onchange="ttsT(this.checked)" style="width:auto;vertical-align:middle"> 🔈 Lire les réponses</label></div>
+ <div class="cd gl chatbox"><div id="chat">${mh}</div><div id="vi" data-s="${U.vs||'idle'}"><span class="vb"><i></i><i></i><i></i><i></i><i></i></span><span class="vt">${{idle:'Prêt',listen:'Je t’écoute…',think:'Je réfléchis…',speak:'Je parle…'}[U.vs||'idle']}</span><button class="g" onclick="vstop()">■ Arrêter</button><label class="tts-toggle" title="Activer ou désactiver la lecture automatique des réponses"><input type="checkbox" ${U.tts?'checked':''} onchange="ttsT(this.checked)" aria-label="Lire automatiquement les réponses"><span class="tts-switch" aria-hidden="true"></span><span class="tts-copy"><b>🔊 Lecture vocale</b><small>${U.tts?'Activée':'Désactivée'}</small></span></label></div>
  <div id="mh"></div><div class="cmp"><button id="mic" class="${U.vs==='listen'?'on':''}" onclick="micToggle()" aria-label="Microphone">${ic('ai',20)}</button><input id="ai" data-f="u_ai" class="fi" placeholder="Parle ou écris : « Puis-je dépenser 80 € ce week-end ? »" style="flex:1" onkeydown="if(event.key==='Enter')ask()"><button class="g" onclick="U.dv=!U.dv;go()" title="Données utilisées" style="padding:9px 11px">📎</button><button onclick="ask()">Envoyer</button></div>
  ${U.dv?`<div class="note">Données que l’assistant peut lire : revenus ${eur(T.rev)} · fixes ${eur(T.fix)} · variables ${eur(T.vr)} · épargne ${eur(T.ep)} · objectifs ${S.goals.length} · transactions ${S.log.length} · mois archivés ${S.hist.length}.</div>`:''}</div></div>
  <aside class="cd hist ${U.hs?'open':''}"><h3>Historique <button class="lk" onclick="newConv()">+ Nouvelle</button></h3>${[...S.convs].reverse().map(c=>`<div class="cv ${c.id===cv.id?'on':''}" onclick="U.cv='${c.id}';go()"><span>${esc(c.title)}</span><button class="x" onclick="event.stopPropagation();delConv('${c.id}')">×</button></div>`).join('')}</aside></div>
