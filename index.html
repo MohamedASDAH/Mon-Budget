@@ -1052,6 +1052,8 @@ const mk=d=>{d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).p
 const def=()=>({log:[],hist:[],abo:[],goals:[],set:{name:''},month:mk(),solde:0,conge:{dispo:0,acquis:0,pris:0},rev:L(['Salaire (€)','Prime']),fix:L(['Salle de sport','Spotify','Banque','Frais d’engagement','Téléphonie','Assurance','Internet']),var:L(['Courses','Panier repas','Dépense diverse','Essence','Déplacement']),epa:L(['Enveloppe','Livret durable','Bonus de fin de mois'])});
 let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
 function norm(){if(!S||!S.rev)S=def();
+// Retire l'ancienne catégorie e-commerce des listes de revenus déjà enregistrées.
+if(Array.isArray(S.rev))S.rev=S.rev.filter(r=>!/(^|\s)(revenu\s+)?e[ -]?commerce(\s|$)/i.test(String(r.label||'').trim()));
 // Migration: remove the old automatic 2.08-day default; keep any other user-entered value.
 if(S.conge&&Number(S.conge.acquis)===2.08)S.conge.acquis=0;
 if(S.conge&&!Number.isFinite(Number(S.conge.acquis)))S.conge.acquis=0;
