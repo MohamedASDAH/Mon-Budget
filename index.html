@@ -929,6 +929,36 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
  color:#17243d!important;-webkit-text-fill-color:#17243d!important;
 }
 </style>
+<style id="desktop-budget-ai-cards-light-fix">
+/* Mode clair PC : conserver les deux cartes du haut avec un contraste fort */
+@media (min-width:861px){
+ :root[data-theme="light"] #pg .grid.g2 > .cd.hero{
+  background:linear-gradient(135deg,#263b66 0%,#354d7b 58%,#465b88 100%)!important;
+  color:#fff!important;border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 12px 30px rgba(32,51,88,.16)!important;
+ }
+ :root[data-theme="light"] #pg .grid.g2 > .cd.aic{
+  background:linear-gradient(135deg,#242b49 0%,#34365f 58%,#41406d 100%)!important;
+  color:#fff!important;border:1px solid rgba(255,255,255,.16)!important;
+  box-shadow:0 12px 30px rgba(32,40,75,.16)!important;
+ }
+ :root[data-theme="light"] #pg .grid.g2 > .cd.hero *,
+ :root[data-theme="light"] #pg .grid.g2 > .cd.aic *{
+  color:#fff!important;-webkit-text-fill-color:#fff!important;
+  text-shadow:none!important;
+ }
+ :root[data-theme="light"] #pg .grid.g2 > .cd.hero .pill{
+  background:rgba(255,255,255,.16)!important;color:#fff!important;
+ }
+ :root[data-theme="light"] #pg .grid.g2 > .cd.aic button{
+  background:rgba(255,255,255,.13)!important;color:#fff!important;
+  border:1px solid rgba(255,255,255,.25)!important;
+ }
+ :root[data-theme="light"] #pg .grid.g2 > .cd.aic button:hover{
+  background:rgba(255,255,255,.22)!important;
+ }
+}
+</style>
 </head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
