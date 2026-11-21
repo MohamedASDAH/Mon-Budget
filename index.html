@@ -833,7 +833,44 @@ button:not(.g):not(.ni):not(.x):not(.lk):not(.seg button):not(#bn button):not(.w
  .auth-social button{height:50px!important}
  .auth-right .sw{margin-top:16px!important}
 }
-</style></head>
+</style><style id="light-mode-emergency-contrast">
+/* Correctif global : aucun texte clair sur fond clair */
+:root[data-theme="light"] #pg,
+:root[data-theme="light"] #pg *{
+ color:#17243d!important;
+ -webkit-text-fill-color:currentColor!important;
+ text-shadow:none!important;
+}
+:root[data-theme="light"] #pg :is(.hero,.hero *, .aic,.aic *,button.p,button.primary,.p,.primary,.auth-submit){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+:root[data-theme="light"] #pg :is(.pos,.positive,.success,.green){color:#087647!important;-webkit-text-fill-color:#087647!important}
+:root[data-theme="light"] #pg :is(.neg,.negative,.danger,.red){color:#b42332!important;-webkit-text-fill-color:#b42332!important}
+:root[data-theme="light"] #pg :is(.mu,.muted,.hint,.sub,.desc,.label-sub,.gt,.sidebar-tagline,.profile-copy small,small){
+ color:#53627c!important;-webkit-text-fill-color:#53627c!important;opacity:1!important
+}
+:root[data-theme="light"] #pg :is(.cd,.kp,.ti,.note,.acard,.chatbox,.curve-wrap,.stat,.seg,.pill,.tag){
+ background-color:#fff!important;border-color:#d5ddeb!important
+}
+:root[data-theme="light"] #pg :is(input,select,textarea,.fi){
+ background:#fff!important;color:#17243d!important;-webkit-text-fill-color:#17243d!important;border:1px solid #c7d1e1!important
+}
+:root[data-theme="light"] #pg :is(input,textarea)::placeholder{
+ color:#77849b!important;-webkit-text-fill-color:#77849b!important;opacity:1!important
+}
+:root[data-theme="light"] #pg button:not(.p):not(.primary):not(.auth-submit){
+ color:#34415d!important;-webkit-text-fill-color:#34415d!important
+}
+:root[data-theme="light"] #pg .hero .pill{color:#fff!important;-webkit-text-fill-color:#fff!important;background:#ffffff26!important}
+:root[data-theme="light"] #pg .aihd,:root[data-theme="light"] #pg .aihd *{
+ color:#17243d!important;-webkit-text-fill-color:#17243d!important
+}
+:root[data-theme="light"] #pg .aihd :is(.mu,small){color:#53627c!important;-webkit-text-fill-color:#53627c!important}
+:root[data-theme="light"] #sb,:root[data-theme="light"] #bn{background:#fff!important;color:#263653!important}
+:root[data-theme="light"] #sb *,:root[data-theme="light"] #bn *{color:#34415d!important;-webkit-text-fill-color:currentColor!important}
+:root[data-theme="light"] #sb .ni.on,:root[data-theme="light"] #sb .ni.on *,:root[data-theme="light"] #bn button.on{color:#5036b4!important;-webkit-text-fill-color:#5036b4!important}
+</style>
+</head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
 <div id="auth" class="on"></div>
