@@ -786,6 +786,44 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
  .bank-deck .deck-card,.bank-deck .deck-card.deck-active,.bank-deck .deck-card:not(.deck-active){height:auto!important;aspect-ratio:1.68!important}
  .bank-deck .deck-card .deck-bottom strong{font-size:18px!important}
 }
+
+/* Alignement parfait des actions Dépense / Revenu */
+.account-widget .bank-card-actions{
+ display:grid!important;
+ grid-template-columns:repeat(2,minmax(0,1fr))!important;
+ align-items:stretch!important;
+ justify-content:center!important;
+ width:min(100%,560px)!important;
+ max-width:560px!important;
+ margin:22px auto 25px!important;
+ gap:14px!important;
+}
+.account-widget .bank-card-actions button,
+.account-widget .bank-card-actions button:first-child,
+.account-widget .bank-card-actions button+button{
+ box-sizing:border-box!important;
+ display:flex!important;
+ align-items:center!important;
+ justify-content:center!important;
+ width:100%!important;
+ min-width:0!important;
+ height:58px!important;
+ min-height:58px!important;
+ margin:0!important;
+ padding:0 16px!important;
+ border-radius:999px!important;
+ line-height:1.2!important;
+ font-size:15px!important;
+ font-weight:650!important;
+ text-align:center!important;
+ white-space:nowrap!important;
+}
+@media(max-width:520px){
+ .account-widget .bank-card-actions{gap:9px!important;margin:17px auto 20px!important}
+ .account-widget .bank-card-actions button,
+ .account-widget .bank-card-actions button:first-child,
+ .account-widget .bank-card-actions button+button{height:51px!important;min-height:51px!important;padding:0 8px!important;font-size:13px!important}
+}
 </style>
 
 <style id="light-mode-contrast-fix">
