@@ -1521,6 +1521,39 @@ button.g,.mb,.th{background:rgba(255,255,255,.045);border:1px solid rgba(201,170
 /* Aspect carte virtuelle premium : réseau, numéro masqué et puce */
 .deck-card{height:190px;padding:15px 18px 14px;background:linear-gradient(145deg,#3a392f 0%,#282821 48%,#171815 100%)}.deck-card.deck-active{height:190px;top:78px}.deck-card:after{content:'';position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,#ffffff08 48%,transparent 62%);pointer-events:none}.deck-top{align-items:flex-start}.deck-network{font-size:17px!important;font-weight:950;font-style:italic;letter-spacing:-1px;color:#f4f1e8!important;text-shadow:0 1px 2px #0008}.deck-network.mastercard{font-size:10px!important;font-style:normal;letter-spacing:-.5px;color:#eee!important}.deck-network.mastercard:before{content:'';display:inline-block;width:17px;height:17px;border-radius:50%;background:#e84b36;box-shadow:11px 0 0 #e9a23a;margin-right:7px;vertical-align:middle}.deck-number{position:absolute;left:19px;top:47%;font-size:11px;letter-spacing:1.3px;color:#d2cdbd;opacity:.85}.deck-chip{top:45%;right:18px;width:35px;height:27px}.deck-bottom{margin-top:auto}.deck-bottom em{display:block;font-size:9px;font-style:normal;color:#bdb5a2;margin-top:4px;letter-spacing:.35px}.deck-card.deck-active .deck-bottom strong{font-size:21px}.deck-card:not(.deck-active){height:175px}.bank-deck{height:294px}@media(max-width:560px){.bank-deck{height:278px}.deck-card{height:180px;padding:13px 15px}.deck-card.deck-active{height:184px;top:75px}.deck-card:not(.deck-active){height:165px}.deck-number{left:15px}.deck-chip{right:15px}}
 </style>
+
+<style id="final-readable-contrast-both-themes">
+/* Contraste final — textes, cartes, formulaires et navigation */
+:root{--tx:#f4f1e9;--mu:#aeb8c7}
+:root:not([data-theme="light"]) body{color:#f1f3f7}
+:root:not([data-theme="light"]) #pg :is(p,small,label,.mu,.muted,.hint,.desc,.sub,.gt,.caption){color:#b8c2d1}
+:root:not([data-theme="light"]) #pg :is(input,select,textarea){color:#f5f6fa!important;background:#101a29!important;border-color:#526078!important}
+:root:not([data-theme="light"]) #pg :is(input,textarea)::placeholder{color:#a6b1c2!important;opacity:1}
+:root:not([data-theme="light"]) #pg :is(.cd,.kp,.ti,.note,.stat,.chatbox,.curve-wrap,.seg,.pill,.tag){border-color:rgba(201,170,112,.24)}
+:root:not([data-theme="light"]) #pg button.g,:root:not([data-theme="light"]) #pg .mb,:root:not([data-theme="light"]) #pg .th{color:#f0e6d2!important}
+:root[data-theme="light"] body{color:#202a3a!important}
+:root[data-theme="light"] #pg *{text-shadow:none}
+:root[data-theme="light"] #pg :is(h1,h2,h3,h4,h5,p,label,small,b,strong,em,span,a,li,td,th,summary,legend,dt,dd,div){-webkit-text-fill-color:currentColor}
+:root[data-theme="light"] #pg :is(p,small,label,.mu,.muted,.hint,.desc,.sub,.gt,.caption,.sidebar-tagline,.profile-copy small){color:#596579!important;opacity:1!important}
+:root[data-theme="light"] #pg :is(h1,h2,h3,h4,h5,.title,.kp b,.tx .tn div){color:#202a3a!important}
+:root[data-theme="light"] #pg :is(input,select,textarea,.fi){background:#fff!important;color:#202a3a!important;border:1px solid #b9c5d6!important;color-scheme:light}
+:root[data-theme="light"] #pg :is(input,textarea)::placeholder{color:#68778d!important;opacity:1!important}
+:root[data-theme="light"] #pg :is(.cd,.kp,.ti,.note,.stat,.chatbox,.curve-wrap,.seg,.pill,.tag,.acard){border-color:#d5dce7!important}
+:root[data-theme="light"] #pg :is(button.g,.mb,.th){background:#fff!important;color:#34435a!important;border:1px solid #cbd4e1!important}
+:root[data-theme="light"] #pg :is(button.primary,.p,.primary,.auth-submit){background:linear-gradient(120deg,#c6a96b,#9f8047)!important;color:#17130c!important}
+:root[data-theme="light"] #pg :is(.hero,.hero *, .aic,.aic *, .account-widget,.account-widget *, .deck-card,.deck-card *, .bank-card,.bank-card *){color:#fff!important;-webkit-text-fill-color:#fff!important}
+:root[data-theme="light"] #pg :is(.hero,.aic){border-color:#b8a477!important}
+:root[data-theme="light"] #pg :is(.hero,.aic) :is(small,p,.mu,.muted){color:#e5e9f0!important;-webkit-text-fill-color:#e5e9f0!important}
+:root[data-theme="light"] #pg :is(.pos,.positive,.success,.green){color:#087647!important;-webkit-text-fill-color:#087647!important}
+:root[data-theme="light"] #pg :is(.neg,.negative,.danger,.red){color:#b42332!important;-webkit-text-fill-color:#b42332!important}
+:root[data-theme="light"] #sb,:root[data-theme="light"] #bn{background:#fffdf8!important}
+:root[data-theme="light"] #sb :is(.ni,.gt,.sidebar-tagline),:root[data-theme="light"] #bn button{color:#46536a!important;-webkit-text-fill-color:#46536a!important}
+:root[data-theme="light"] #sb .ni.on,:root[data-theme="light"] #sb .ni.on *,:root[data-theme="light"] #bn button.on{color:#72572a!important;-webkit-text-fill-color:#72572a!important}
+:root[data-theme="light"] #pg table{color:#263247}
+:root[data-theme="light"] #pg :is(tr,td,th){border-color:#d8dfE9!important}
+:root[data-theme="light"] #pg :is(.toast,.modal,.pop,.dropdown,.menu,.select-menu){color:#202a3a}
+:root[data-theme="light"] #pg svg text{fill:currentColor}
+</style>
 </head>
 <body>
 <div id="wallpaper" aria-hidden="true"></div>
