@@ -1004,25 +1004,30 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 :root[data-theme="light"] .curve-wrap.premium-forecast .curve-legend{border-color:#eee8dd;color:#737b87}
 @media(max-width:650px){.curve-wrap.premium-forecast{padding:16px 11px 13px}.curve-wrap.premium-forecast .curve-svg{min-height:195px}.curve-wrap.premium-forecast .curve-legend{gap:12px 16px}}
 
-/* Finary patrimoine chart: dark canvas, fine champagne curve and warm filled area */
-.curve-wrap.finary-curve{padding:18px 16px 12px;border:0;border-radius:13px;background:#080808;box-shadow:none;color:#f5f3ee}
+/* Graphique patrimoine premium, toujours visible sur desktop et mobile */
+.curve-wrap.finary-curve{padding:18px 16px 13px;border:1px solid rgba(201,169,120,.18);border-radius:16px;background:linear-gradient(180deg,#0b0b0b,#11100e);color:#f5f3ee;overflow:hidden}
 .curve-wrap.finary-curve:before{display:none}
-.finary-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;color:#a9a49b}
-.finary-title{font-size:13px;letter-spacing:.1px;color:#aaa9a6;font-weight:500;text-align:center}
-.finary-change,.finary-change-right{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap;color:#75b99b}
+.finary-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
+.finary-title{font-size:12px;color:#aaa49a;font-weight:550;text-align:center}
+.finary-change,.finary-change-right{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap;color:#79b99a}
 .finary-change{text-align:left}.finary-change-right{text-align:right}
 .finary-change small{font-size:10px;font-weight:450;color:#77736c}
 .finary-change.neg,.finary-change-right.neg{color:#d68d82}
-.finary-total{font-size:29px;line-height:1.18;font-weight:720;letter-spacing:-.8px;text-align:center;color:#fafafa;margin:7px 0 3px;font-variant-numeric:tabular-nums}
-.finary-period{text-align:center;font-size:10px;text-transform:capitalize;color:#77736c;margin:3px 0 0}
-.curve-wrap.finary-curve .curve-chart-shell{margin-top:8px}
-.curve-wrap.finary-curve .curve-svg{display:block;min-height:0;height:auto;width:100%}
-.curve-wrap.finary-curve .curve-line{filter:none}
-.curve-wrap.finary-curve .curve-legend,.curve-wrap.finary-curve .curve-footnote{display:none}
-.curve-wrap.finary-curve .curve-tooltip{margin-top:8px;background:#171512;border-color:#393126;color:#f5f0e7}
-.curve-wrap.finary-curve #todayHalo,.curve-wrap.finary-curve #todayDot{display:none}
-:root[data-theme=light] .curve-wrap.finary-curve{background:#080808;border-color:transparent;color:#f5f3ee}
-@media(max-width:650px){.curve-wrap.finary-curve{padding:16px 10px 10px}.finary-total{font-size:27px}.curve-wrap.finary-curve .curve-chart-shell{margin-top:7px}}
+.finary-total{font-size:29px;line-height:1.18;font-weight:720;letter-spacing:-.8px;text-align:center;color:#fafafa;margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.finary-period{text-align:center;font-size:10px;text-transform:capitalize;color:#888078;margin:4px 0 8px}
+.curve-wrap.finary-curve .curve-chart-shell{display:block;width:100%;min-height:220px;margin:0;overflow:visible}
+.curve-wrap.finary-curve .curve-svg{display:block!important;visibility:visible!important;opacity:1!important;width:100%!important;height:auto!important;min-height:220px!important;aspect-ratio:700/340;overflow:visible}
+.curve-wrap.finary-curve .curve-svg path.curve-fill{fill:url(#curveArea)!important;opacity:1!important}
+.curve-wrap.finary-curve .curve-svg path.curve-line{display:block!important;visibility:visible!important;opacity:1!important;stroke:#d7b77f!important;stroke-width:2.6!important;filter:drop-shadow(0 0 5px rgba(215,183,127,.2))}
+.curve-wrap.finary-curve .curve-svg .curve-hit{fill:transparent;pointer-events:all}
+.curve-wrap.finary-curve .curve-legend{display:flex!important;justify-content:flex-start;margin:6px 0 0;padding:0;border:0;font-size:10px;color:#938b80}
+.curve-wrap.finary-curve .curve-legend .leg-real{background:#d7b77f;box-shadow:0 0 7px rgba(215,183,127,.35)}
+.curve-wrap.finary-curve .curve-footnote{display:none}
+.curve-wrap.finary-curve .curve-tooltip{margin-top:9px;background:#171512;border-color:#393126;color:#f5f0e7}
+.curve-wrap.finary-curve #todayHalo{display:block!important;fill:#d7b77f;opacity:.18}
+.curve-wrap.finary-curve #todayDot{display:block!important;fill:#f0d8ad;stroke:#17130d}
+:root[data-theme=light] .curve-wrap.finary-curve{background:linear-gradient(180deg,#0b0b0b,#11100e);border-color:rgba(201,169,120,.18);color:#f5f3ee}
+@media(max-width:650px){.curve-wrap.finary-curve{padding:15px 10px 11px}.finary-total{font-size:26px}.curve-wrap.finary-curve .curve-chart-shell,.curve-wrap.finary-curve .curve-svg{min-height:205px}}
 
 </style>
 
@@ -2320,7 +2325,7 @@ function bal(big){
  const all=P.map(p=>p.v);let lo=Math.min(...all),hi=Math.max(...all);
  if(hi===lo){hi+=1;lo-=1}
  const pad=Math.max((hi-lo)*.22,Math.max(1,Math.abs(hi)*.025));lo-=pad;hi+=pad;
- const W=700,H=big?360:340,L=12,R=12,Tp=14,B=34,
+ const W=700,H=big?340:320,L=12,R=12,Tp=24,B=36,
  X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B;
  const col='#c9a978',light='#e4c99d';
  const pts=P.map(p=>({x:X(p.d),y:Y(p.v)}));
@@ -2331,7 +2336,7 @@ function bal(big){
  }).join(' ');
  const area=line+' L'+X(td).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
  const fmt=v=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:0}).format(v)+' €';
- const grid='';
+ const grid=Array.from({length:4},(_,i)=>{const yy=Tp+(H-Tp-B)*i/3;return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="#c9b99d" stroke-opacity="'+(i===3?'.13':'.065')+'" stroke-width="1"/>'}).join('');
  const days=[...new Set([1,Math.round(D/3),Math.round(D*2/3),D].filter(d=>d<=D))];
  const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-9)+'" text-anchor="'+(d===1?'start':d===D?'end':'middle')+'" font-size="11" fill="var(--mu)" opacity=".72">'+(d===1?'1 '+mn.slice(0,3):d+' '+mn.slice(0,3))+'</text>').join('');
  const todayX=X(td),actualY=Y(current);
