@@ -1626,7 +1626,7 @@ function bal(big){
  });
  return{html,proj,spent:spent/td}
 }
-function txList(n,filter){let a=[...S.log].filter(e=>!filter||(e.accountId||S.accounts[0]?.id)===S.activeAccountId).sort((x,y)=>(filter?Number(y.t||0):Number(y.createdAt||y.t||0))-(filter?Number(x.t||0):Number(x.createdAt||x.t||0)));
+function txList(n,filter){let a=[...S.log].filter(e=>!n||(e.accountId||S.accounts[0]?.id)===S.activeAccountId).sort((x,y)=>(filter?Number(y.t||0):Number(y.createdAt||y.t||0))-(filter?Number(x.t||0):Number(x.createdAt||x.t||0)));
  if(filter){const q=U.q.toLowerCase(),mn=num(U.min),sn=U.since?new Date(U.since+'T00:00:00').getTime():0,en=U.until?new Date(U.until+'T23:59:59.999').getTime():0;a=a.filter(e=>(U.ty==='all'||(U.ty==='rev')===(e.k==='rev'))&&(!U.cat||e.label===U.cat)&&(!q||((e.desc||'')+' '+e.label).toLowerCase().includes(q))&&(!mn||Math.abs(Number(e.amt))>=mn)&&(!sn||Number(e.t||0)>=sn)&&(!en||Number(e.t||0)<=en))}
  if(n)a=a.slice(0,n);if(!a.length)return'<p class="mu">Aucune transaction.</p>';
  return a.map(e=>{const rv=e.k==='rev',credit=rv?Number(e.amt)>=0:Number(e.amt)<0,d=new Date(e.t).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'});
