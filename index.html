@@ -645,6 +645,41 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .deck-card.card-art-obsidian .deck-bottom strong{color:#fff0ce;font-size:23px}
 .deck-card.card-art-obsidian .deck-bottom em{color:#d8c49a;letter-spacing:1px;text-transform:uppercase}
 .deck-card.card-art-obsidian .deck-status{color:#f3d58e;border-color:#c7a15e88;background:#c6a96b1c}
+
+/* Rendu carte bancaire réaliste — illustration vectorielle intégrée et données du compte */
+.bank-deck{perspective:1100px}
+.deck-card{isolation:isolate;transform-style:preserve-3d;backface-visibility:hidden}
+.deck-card:not(.deck-active){transform:scale(.965) rotateY(-5deg)}
+.deck-card.deck-active{transform:translateY(0) rotateY(0);box-shadow:0 22px 48px #000b,0 0 0 1px #d6b56b55,inset 0 1px #ffffff32}
+.deck-art{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:.96}
+.deck-art svg{width:100%;height:100%;display:block}
+.deck-card:before{z-index:-2!important}
+.deck-card:after{z-index:-1!important}
+.deck-contactless{position:absolute;right:18px;top:43%;font-size:21px;letter-spacing:-8px;transform:rotate(90deg);color:#eee4cb;opacity:.88;text-shadow:0 1px 4px #000}
+.deck-chip{top:43%;right:auto;left:19px;width:38px;height:29px;border-radius:6px;display:block;overflow:hidden;background:linear-gradient(135deg,#f6e2b0,#b18a4b 50%,#e7d29f)!important;border:1px solid #f9e8bf!important;box-shadow:0 2px 5px #0009,inset 0 0 0 1px #ffffff88!important}
+.deck-chip:before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 32%,#806332 33% 35%,transparent 36% 64%,#806332 65% 67%,transparent 68%),linear-gradient(0deg,transparent 31%,#806332 32% 35%,transparent 36% 64%,#806332 65% 68%,transparent 69%)}
+.deck-chip:after{content:'';position:absolute;left:34%;top:28%;width:32%;height:44%;border:1px solid #806332;border-radius:3px}
+.deck-chip i{display:none}
+.deck-card .deck-number{top:62%;left:19px;right:auto;font-family:ui-monospace,monospace;font-size:12px;letter-spacing:2px;color:#f2e7cf;text-shadow:0 1px 5px #000}
+.deck-card .deck-top{z-index:2}
+.deck-card .deck-top b{font-size:11px;letter-spacing:1.3px;text-shadow:0 1px 4px #000}
+.deck-card .deck-network{font-size:20px!important;font-weight:900!important;font-style:italic!important;letter-spacing:-1px!important;text-shadow:0 2px 5px #000}
+.deck-card .deck-network.mastercard{font-size:0!important;width:36px;height:23px;position:relative}
+.deck-card .deck-network.mastercard:before{width:21px;height:21px;box-shadow:13px 0 0 #f0a22c;margin:0;position:absolute;left:0;top:0}
+.deck-card .deck-network.amex{font-size:11px!important;font-style:normal!important;letter-spacing:.2px!important}
+.deck-card .deck-bottom{z-index:2;align-items:flex-end}
+.deck-card .deck-bottom strong{font-variant-numeric:tabular-nums;letter-spacing:.1px}
+.deck-card .deck-bottom em{font-size:10px;text-transform:uppercase;letter-spacing:1.15px}
+.deck-card.card-art-obsidian{background:linear-gradient(135deg,#050505,#12100d 55%,#020202);border:1px solid #d7b66e}
+.deck-card.card-art-obsidian .deck-art{opacity:1}
+.deck-card.card-art-obsidian .deck-art svg{filter:drop-shadow(0 0 5px #d9b36a55)}
+.deck-card.card-art-obsidian .deck-top b,.deck-card.card-art-obsidian .deck-network{color:#f0d18c!important}
+.deck-card.card-art-obsidian .deck-number{color:#e6c78a}
+.deck-card.card-art-onyx .deck-art{filter:grayscale(1);opacity:.7}
+.deck-card.card-art-silver .deck-art{filter:grayscale(1) brightness(1.5)}
+.deck-card.card-art-gold .deck-art{filter:sepia(.65) saturate(1.5)}
+.deck-card.card-art-emerald .deck-art{filter:hue-rotate(95deg) saturate(.8)}
+.deck-card.card-art-platinum .deck-art{filter:grayscale(1) brightness(1.7)}
 </style>
 
 <style id="light-mode-contrast-fix">
@@ -1717,7 +1752,7 @@ function bars(list){const a=list.filter(r=>r.budget>0);return a.length?a.map(r=>
 function accountWidget(T){
  const accounts=S.accounts||[],active=accounts.find(a=>a.id===S.activeAccountId),balance=a=>accountBalance(a.id),total=accounts.reduce((n,a)=>n+balance(a),0);
  const ordered=active?[...accounts.filter(a=>a.id!==active.id).slice(-2),active]:accounts.slice(-3);
- const deck=ordered.map((a,i)=>{const selected=a.id===S.activeAccountId;return `<button type="button" class="deck-card ${selected?'deck-active':''} tone-${a.tone||'gold'} card-art-${a.design||'obsidian'}" style="--deck-i:${i};z-index:${i+1}" onclick="selectAccount('${a.id}')" aria-pressed="${selected}"><span class="deck-top"><b>${esc(a.bank||'MON BUDGET').toUpperCase()}</b><span class="deck-network ${(a.network||'VISA').toLowerCase()}">${esc(a.network||'VISA')}</span></span><span class="deck-number">•••• &nbsp; •••• &nbsp; •••• &nbsp; ••••</span><span class="deck-chip" aria-hidden="true"><i></i><i></i><i></i></span><span class="deck-bottom"><span><small>Solde du compte</small><strong>${eur(balance(a))}</strong><em>${esc(a.name)}</em></span><span class="deck-status">${selected?'✓':''}</span></span></button>`}).join('');
+ const deck=ordered.map((a,i)=>{const selected=a.id===S.activeAccountId;return `<button type="button" class="deck-card ${selected?'deck-active':''} tone-${a.tone||'gold'} card-art-${a.design||'obsidian'}" style="--deck-i:${i};z-index:${i+1}" onclick="selectAccount('${a.id}')" aria-pressed="${selected}"><span class="deck-art" aria-hidden="true"><svg viewBox="0 0 360 220" preserveAspectRatio="none"><defs><linearGradient id="metal-${a.id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4d99a"/><stop offset=".42" stop-color="#9a7136"/><stop offset="1" stop-color="#f0d18c"/></linearGradient><linearGradient id="shine-${a.id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity="0"/><stop offset=".52" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path d="M-20 170 Q90 50 205 115 T390 25" fill="none" stroke="url(#metal-${a.id})" stroke-opacity=".58" stroke-width="1.4"/><path d="M-20 192 Q95 72 210 137 T390 47" fill="none" stroke="url(#metal-${a.id})" stroke-opacity=".28"/><path d="M210 -20 Q120 80 210 240" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="32"/><path d="M0 0H360V220H0Z" fill="url(#shine-${a.id})"/></svg></span><span class="deck-top"><b>${esc(a.bank||'MON BUDGET').toUpperCase()}</b><span class="deck-network ${(a.network||'VISA').toLowerCase()}">${esc(a.network||'VISA')}</span></span><span class="deck-chip" aria-label="Puce de carte"><i></i><i></i><i></i><i></i></span><span class="deck-contactless" aria-hidden="true">)))</span><span class="deck-number">•••• &nbsp; •••• &nbsp; •••• &nbsp; ••••</span><span class="deck-bottom"><span><small>Solde du compte</small><strong>${eur(balance(a))}</strong><em>${esc(a.name)}</em></span><span class="deck-status">${selected?'✓':''}</span></span></button>`}).join('');
  const extra=accounts.length>3?'<div class="deck-extra">'+accounts.slice(0,-3).map(a=>'<button onclick="selectAccount(\''+a.id+'\')">'+esc(a.name)+'</button>').join('')+'</div>':'';
  const activeLogs=active?[...S.log].filter(e=>(e.accountId||S.accounts[0]?.id)===active.id).sort((a,b)=>Number(b.t||0)-Number(a.t||0)).slice(0,3):[];
  const recent=activeLogs.length?activeLogs.map(e=>{const credit=e.k==='rev'&&Number(e.amt)>=0,desc=e.desc||e.label,stamp=new Date(e.t||Date.now()).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}),symbol=credit?'↗':'↘';return `<div class="bank-recent-row"><span class="bank-recent-icon ${credit?'income':''}">${symbol}</span><span class="bank-recent-info"><b>${esc(desc)}</b><small>${stamp} · ${esc(e.label)}</small></span><strong class="${credit?'pos':'neg'}">${credit?'+':'−'}${eur(Math.abs(Number(e.amt)))}</strong></div>`}).join(''):'<div class="bank-recent-empty">Aucune transaction sur ce compte pour le moment.</div>';
