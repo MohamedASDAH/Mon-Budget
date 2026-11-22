@@ -824,7 +824,85 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
  .account-widget .bank-card-actions button:first-child,
  .account-widget .bank-card-actions button+button{height:51px!important;min-height:51px!important;padding:0 8px!important;font-size:13px!important}
 }
-.account-recent-panel .bank-recent-heading>b{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.account-recent-panel .recent-account-name{display:inline-flex;align-items:center;padding:4px 9px;border:1px solid #c6a15a55;border-radius:30px;background:#c6a15a12;color:#e7c77f;font-size:10px;font-weight:600;letter-spacing:.2px}.account-recent-panel .bank-recent-empty{padding:22px 18px;color:#98938a;font-size:12px}</style>
+.account-recent-panel .bank-recent-heading>b{display:flex;align-items:center;gap:9px;flex-wrap:wrap}.account-recent-panel .recent-account-name{display:inline-flex;align-items:center;padding:4px 9px;border:1px solid #c6a15a55;border-radius:30px;background:#c6a15a12;color:#e7c77f;font-size:10px;font-weight:600;letter-spacing:.2px}.account-recent-panel .bank-recent-empty{padding:22px 18px;color:#98938a;font-size:12px}
+/* Mode clair : harmonisation finale de toutes les zones de l'application */
+:root[data-theme="light"]{
+ color-scheme:light!important;
+ --bg:#eef2f8!important;--sb:#fff!important;--cd:#fff!important;
+ --in:#fff!important;--bd:#d5ddeb!important;--tx:#202a3a!important;
+ --mu:#59677e!important;--nv:#f4f6fb!important;
+}
+:root[data-theme="light"] body,
+:root[data-theme="light"] main,
+:root[data-theme="light"] #pg{background-color:transparent;color:#202a3a!important}
+:root[data-theme="light"] #pg :is(.cd,.kp,.ti,.note,.stat,.chatbox,.curve-wrap,.seg,.bar,.acard,.account-actions,.account-recent-panel,.account-add-panel,.account-details,.modal,.pop,.dropdown,.menu,.select-menu,.toast){
+ color:#202a3a!important;background-color:#fff!important;border-color:#d5ddeb!important;
+}
+:root[data-theme="light"] #pg :is(h1,h2,h3,h4,h5,p,li,dt,dd,label,legend,summary,th,td,b,strong,a:not(.hero a),.title,.name,.value){
+ color:#202a3a!important;-webkit-text-fill-color:#202a3a!important;text-shadow:none!important;
+}
+:root[data-theme="light"] #pg :is(small,.mu,.muted,.hint,.sub,.desc,.label-sub,.gt,.caption,.help,.empty,.date,.meta){
+ color:#59677e!important;-webkit-text-fill-color:#59677e!important;opacity:1!important;
+}
+:root[data-theme="light"] #pg :is(input,select,textarea,.fi){
+ background:#fff!important;color:#202a3a!important;-webkit-text-fill-color:#202a3a!important;
+ border:1px solid #c5cfdf!important;box-shadow:none!important;color-scheme:light!important;
+}
+:root[data-theme="light"] #pg :is(input,textarea)::placeholder{
+ color:#78859a!important;-webkit-text-fill-color:#78859a!important;opacity:1!important;
+}
+:root[data-theme="light"] #pg :is(button:not(.p):not(.primary):not(.auth-submit):not(.danger),.g){
+ color:#34435b!important;-webkit-text-fill-color:#34435b!important;
+}
+:root[data-theme="light"] #pg :is(button.p,button.primary,.p,.primary,.auth-submit){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+:root[data-theme="light"] #pg :is(.pos,.positive,.success,.green){
+ color:#087647!important;-webkit-text-fill-color:#087647!important;
+}
+:root[data-theme="light"] #pg :is(.neg,.negative,.danger,.red){
+ color:#b42332!important;-webkit-text-fill-color:#b42332!important;
+}
+:root[data-theme="light"] #pg :is(table,tr,td,th){border-color:#d5ddeb!important}
+:root[data-theme="light"] #pg hr{border-color:#d5ddeb!important}
+:root[data-theme="light"] #pg :is(.pill,.tag,.badge){background:#eef2f8!important;border-color:#d5ddeb!important;color:#34435b!important}
+:root[data-theme="light"] #pg :is(.seg,.bar){background:#eef2f8!important}
+:root[data-theme="light"] #pg .seg button.on{background:#6042c7!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+:root[data-theme="light"] #pg .curve-tooltip{background:#fff!important;color:#202a3a!important;border-color:#cbd5e1!important}
+/* Les cartes bancaires et panneaux premium conservent leur apparence sombre */
+:root[data-theme="light"] #pg :is(.account-widget,.account-widget .deck-card,.account-widget .deck-card *, .bank-card,.bank-card *, .hero,.hero *, .aic,.aic *){
+ color:#fff!important;-webkit-text-fill-color:#fff!important;
+}
+:root[data-theme="light"] #pg .account-widget .account-manage{
+ background:transparent!important;color:#202a3a!important;
+}
+:root[data-theme="light"] #pg .account-widget .account-manage label{
+ color:#59677e!important;-webkit-text-fill-color:#59677e!important;
+}
+:root[data-theme="light"] #pg .account-widget .account-manage input#accountNameEdit,
+:root[data-theme="light"] #pg .account-widget .account-manage select#accountDesignEdit{
+ background:#fff!important;color:#202a3a!important;-webkit-text-fill-color:#202a3a!important;
+ border:1px solid #c5cfdf!important;
+}
+:root[data-theme="light"] #pg .account-widget .account-manage button:not(.danger){
+ background:linear-gradient(145deg,#fff,#eef2f8)!important;
+ color:#34435b!important;-webkit-text-fill-color:#34435b!important;
+ border:1px solid #cbd5e1!important;
+}
+:root[data-theme="light"] #pg .account-widget .account-manage button.danger{
+ background:#fff1f1!important;color:#b42332!important;-webkit-text-fill-color:#b42332!important;
+ border:1px solid #efcaca!important;
+}
+:root[data-theme="light"] #sb,:root[data-theme="light"] #bn{
+ background:#fff!important;color:#34435b!important;border-color:#d5ddeb!important;
+}
+:root[data-theme="light"] #sb :is(span,b,small,button),:root[data-theme="light"] #bn button{
+ color:#46536a!important;-webkit-text-fill-color:#46536a!important;
+}
+:root[data-theme="light"] #sb .ni.on,:root[data-theme="light"] #sb .ni.on *,:root[data-theme="light"] #bn button.on{
+ color:#72572a!important;-webkit-text-fill-color:#72572a!important;
+}
+</style>
 
 <style id="light-mode-contrast-fix">
 /* Mode clair : contraste renforcé et lisibilité cohérente */
