@@ -902,6 +902,47 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 :root[data-theme="light"] #sb .ni.on,:root[data-theme="light"] #sb .ni.on *,:root[data-theme="light"] #bn button.on{
  color:#72572a!important;-webkit-text-fill-color:#72572a!important;
 }
+
+/* Accent champagne : détails dorés, surfaces inchangées */
+:root{
+ --ac:#D8B56D!important;
+ --btn:linear-gradient(135deg,#D8B56D,#B99450)!important;
+ --bd:color-mix(in srgb,#D8B56D 20%,#252c40)!important;
+}
+:root[data-theme="light"]{
+ --ac:#B58A43!important;
+ --bd:color-mix(in srgb,#B58A43 22%,#E6E3F0)!important;
+}
+#pg .cd,#pg .note,#pg .stat>div,#pg .fi,#pg input,#pg select,#pg textarea,
+#sb,#bn,.mb,.seg,.account-details,.account-add-panel,.account-actions{
+ border-color:color-mix(in srgb,var(--ac) 24%,var(--bd))!important;
+}
+#pg :is(.lk,.ni.on b,.ni.on,#bn button.on,.kp .ic,.sg b,.pill.or){
+ color:var(--ac)!important;
+}
+#pg :is(input,select,textarea,.fi):focus{
+ outline:2px solid color-mix(in srgb,var(--ac) 52%,transparent)!important;
+ border-color:var(--ac)!important;
+}
+#pg .cd:hover,#pg .sg button:hover{
+ border-color:color-mix(in srgb,var(--ac) 58%,var(--bd))!important;
+}
+#pg .seg button.on{
+ background:color-mix(in srgb,var(--ac) 18%,var(--in))!important;
+ color:var(--ac)!important;
+ box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ac) 38%,transparent)!important;
+}
+#pg .bar i{background:var(--ac)}
+#pg .gl::after,#pg .acard::after{
+ background:linear-gradient(90deg,transparent,#D8B56D,#F0D99F,#D8B56D,transparent)!important;
+}
+#pg :is(.chatbox,.curve-wrap){
+ box-shadow:0 0 0 1px color-mix(in srgb,var(--ac) 22%,transparent),0 12px 34px #00000012!important;
+}
+:root[data-theme="light"] #pg :is(.seg button.on,.ni.on){
+ background:color-mix(in srgb,#B58A43 12%,#fff)!important;
+ color:#9A7130!important;
+}
 </style>
 
 <style id="light-mode-contrast-fix">
