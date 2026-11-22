@@ -680,6 +680,22 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .deck-card.card-art-gold .deck-art{filter:sepia(.65) saturate(1.5)}
 .deck-card.card-art-emerald .deck-art{filter:hue-rotate(95deg) saturate(.8)}
 .deck-card.card-art-platinum .deck-art{filter:grayscale(1) brightness(1.7)}
+
+/* Carte Obsidian Gold : finition matière et gravure haute définition */
+.deck-card{background:#080807!important;border:1px solid #c9a15c!important;box-shadow:0 22px 48px #000b,inset 0 1px #fff3!important}
+.deck-card .deck-art{inset:0;z-index:0;opacity:1!important;border-radius:inherit;overflow:hidden}
+.deck-card .deck-art svg{width:100%;height:100%;display:block;filter:none!important}
+.deck-card .deck-top,.deck-card .deck-bottom,.deck-card .deck-number{z-index:2}
+.deck-card .deck-chip,.deck-card .deck-contactless{display:none!important}
+.deck-card .deck-number{top:61%;left:19px;font-size:12px;letter-spacing:2px;color:#f2dcae}
+.deck-card .deck-top b,.deck-card .deck-network{color:#f1d28d!important;text-shadow:0 1px 4px #000}
+.deck-card .deck-bottom strong{color:#fff0ce;font-size:22px}
+.deck-card .deck-bottom em{color:#e2cfaa}
+.deck-card.card-art-onyx .deck-art{filter:grayscale(1)!important}
+.deck-card.card-art-silver .deck-art{filter:grayscale(1) brightness(1.4)!important}
+.deck-card.card-art-gold .deck-art{filter:sepia(.6) saturate(1.5)!important}
+.deck-card.card-art-emerald .deck-art{filter:hue-rotate(90deg) saturate(.75)!important}
+.deck-card.card-art-platinum .deck-art{filter:grayscale(1) brightness(1.7)!important}
 </style>
 
 <style id="light-mode-contrast-fix">
@@ -1752,7 +1768,46 @@ function bars(list){const a=list.filter(r=>r.budget>0);return a.length?a.map(r=>
 function accountWidget(T){
  const accounts=S.accounts||[],active=accounts.find(a=>a.id===S.activeAccountId),balance=a=>accountBalance(a.id),total=accounts.reduce((n,a)=>n+balance(a),0);
  const ordered=active?[...accounts.filter(a=>a.id!==active.id).slice(-2),active]:accounts.slice(-3);
- const deck=ordered.map((a,i)=>{const selected=a.id===S.activeAccountId;return `<button type="button" class="deck-card ${selected?'deck-active':''} tone-${a.tone||'gold'} card-art-${a.design||'obsidian'}" style="--deck-i:${i};z-index:${i+1}" onclick="selectAccount('${a.id}')" aria-pressed="${selected}"><span class="deck-art" aria-hidden="true"><svg viewBox="0 0 360 220" preserveAspectRatio="none"><defs><linearGradient id="metal-${a.id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f4d99a"/><stop offset=".42" stop-color="#9a7136"/><stop offset="1" stop-color="#f0d18c"/></linearGradient><linearGradient id="shine-${a.id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity="0"/><stop offset=".52" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><path d="M-20 170 Q90 50 205 115 T390 25" fill="none" stroke="url(#metal-${a.id})" stroke-opacity=".58" stroke-width="1.4"/><path d="M-20 192 Q95 72 210 137 T390 47" fill="none" stroke="url(#metal-${a.id})" stroke-opacity=".28"/><path d="M210 -20 Q120 80 210 240" fill="none" stroke="#fff" stroke-opacity=".07" stroke-width="32"/><path d="M0 0H360V220H0Z" fill="url(#shine-${a.id})"/></svg></span><span class="deck-top"><b>${esc(a.bank||'MON BUDGET').toUpperCase()}</b><span class="deck-network ${(a.network||'VISA').toLowerCase()}">${esc(a.network||'VISA')}</span></span><span class="deck-chip" aria-label="Puce de carte"><i></i><i></i><i></i><i></i></span><span class="deck-contactless" aria-hidden="true">)))</span><span class="deck-number">•••• &nbsp; •••• &nbsp; •••• &nbsp; ••••</span><span class="deck-bottom"><span><small>Solde du compte</small><strong>${eur(balance(a))}</strong><em>${esc(a.name)}</em></span><span class="deck-status">${selected?'✓':''}</span></span></button>`}).join('');
+ const deck=ordered.map((a,i)=>{const selected=a.id===S.activeAccountId;return `<button type="button" class="deck-card ${selected?'deck-active':''} tone-${a.tone||'gold'} card-art-${a.design||'obsidian'}" style="--deck-i:${i};z-index:${i+1}" onclick="selectAccount('${a.id}')" aria-pressed="${selected}"><span class="deck-art" aria-hidden="true"><svg viewBox="0 0 360 220" preserveAspectRatio="none">
+<defs>
+ <linearGradient id="cardbase-${a.id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#050505"/><stop offset=".48" stop-color="#171512"/><stop offset="1" stop-color="#030303"/></linearGradient>
+ <linearGradient id="goldfoil-${a.id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff0bd"/><stop offset=".22" stop-color="#b98c43"/><stop offset=".48" stop-color="#f8dda0"/><stop offset=".72" stop-color="#8f682e"/><stop offset="1" stop-color="#f4d28a"/></linearGradient>
+ <linearGradient id="edgefoil-${a.id}" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff1c5"/><stop offset=".45" stop-color="#8f682e"/><stop offset="1" stop-color="#e7c27c"/></linearGradient>
+ <linearGradient id="gloss-${a.id}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff" stop-opacity=".16"/><stop offset=".3" stop-color="#fff" stop-opacity="0"/><stop offset=".7" stop-color="#fff" stop-opacity=".08"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+ <filter id="grain-${a.id}"><feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="2" seed="8"/><feColorMatrix values="0 0 0 0 .5 0 0 0 0 .43 0 0 0 0 .28 0 0 0 .12 0"/></filter>
+ <filter id="glow-${a.id}" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="2.2"/></filter>
+ <clipPath id="clip-${a.id}"><rect x="1" y="1" width="358" height="218" rx="17"/></clipPath>
+</defs>
+<g clip-path="url(#clip-${a.id})">
+ <rect width="360" height="220" fill="url(#cardbase-${a.id})"/>
+ <path d="M-35 173 C58 131 79 64 174 66 S294 117 395 -5" fill="none" stroke="#8f8b83" stroke-opacity=".17" stroke-width="24"/>
+ <path d="M-30 177 C65 129 91 72 174 73 S298 119 392 1" fill="none" stroke="url(#goldfoil-${a.id})" stroke-opacity=".42" stroke-width="1.2"/>
+ <path d="M-30 184 C65 136 91 79 174 80 S298 126 392 8" fill="none" stroke="#fff" stroke-opacity=".17" stroke-width=".5"/>
+ <path d="M-22 220 C64 157 105 127 184 132 S300 181 391 97" fill="none" stroke="url(#goldfoil-${a.id})" stroke-width="12" stroke-opacity=".22" filter="url(#glow-${a.id})"/>
+ <path d="M-22 220 C64 157 105 127 184 132 S300 181 391 97" fill="none" stroke="url(#goldfoil-${a.id})" stroke-width="1.1"/>
+ <path d="M-30 211 C50 151 102 112 185 119 S306 166 390 82" fill="none" stroke="#e5d4b1" stroke-opacity=".25" stroke-width=".6"/>
+ <path d="M110 -25 C160 25 185 62 238 72 S322 61 385 28" fill="none" stroke="url(#goldfoil-${a.id})" stroke-width="17" stroke-opacity=".12"/>
+ <path d="M110 -25 C160 25 185 62 238 72 S322 61 385 28" fill="none" stroke="url(#goldfoil-${a.id})" stroke-width="1.2"/>
+ <g opacity=".22" fill="none" stroke="#c7c0b1" stroke-width=".45">
+  <path d="M-20 20 C70 -5 130 10 195 35 S315 55 390 14"/><path d="M-20 26 C70 1 130 16 195 41 S315 61 390 20"/><path d="M-20 32 C70 7 130 22 195 47 S315 67 390 26"/><path d="M-20 38 C70 13 130 28 195 53 S315 73 390 32"/><path d="M-20 44 C70 19 130 34 195 59 S315 79 390 38"/><path d="M-20 50 C70 25 130 40 195 65 S315 85 390 44"/>
+ </g>
+ <rect width="360" height="220" filter="url(#grain-${a.id})" opacity=".28"/>
+ <rect width="360" height="220" fill="url(#gloss-${a.id})"/>
+ <!-- puce EMV en métal brossé -->
+ <g transform="translate(28 83)">
+  <rect width="43" height="33" rx="5" fill="url(#goldfoil-${a.id})" stroke="#f6e4b8" stroke-width=".8"/>
+  <path d="M14 0 V33 M29 0 V33 M0 11 H43 M0 22 H43" stroke="#795b2e" stroke-width=".8" opacity=".9"/>
+  <rect x="14" y="10" width="15" height="13" rx="2" fill="#d5b16e" stroke="#76582c" stroke-width=".8"/>
+  <path d="M3 3 L10 10 M40 3 L33 10 M3 30 L10 23 M40 30 L33 23" stroke="#fff0c4" stroke-width=".7" opacity=".75"/>
+ </g>
+ <!-- symbole sans contact -->
+ <g transform="translate(314 40)" fill="none" stroke="url(#goldfoil-${a.id})" stroke-width="3.2" stroke-linecap="round">
+  <path d="M0 7 Q12 20 0 33"/><path d="M8 2 Q25 20 8 38"/><path d="M17 -3 Q38 20 17 43"/>
+ </g>
+ <path d="M0 1 H360" stroke="#fff" stroke-opacity=".28"/>
+</g>
+<rect x=".7" y=".7" width="358.6" height="218.6" rx="17" fill="none" stroke="url(#edgefoil-${a.id})" stroke-opacity=".72" stroke-width="1.1"/>
+</svg></span><span class="deck-top"><b>${esc(a.bank||'MON BUDGET').toUpperCase()}</b><span class="deck-network ${(a.network||'VISA').toLowerCase()}">${esc(a.network||'VISA')}</span></span><span class="deck-chip" aria-label="Puce de carte"><i></i><i></i><i></i><i></i></span><span class="deck-contactless" aria-hidden="true">)))</span><span class="deck-number">•••• &nbsp; •••• &nbsp; •••• &nbsp; ••••</span><span class="deck-bottom"><span><small>Solde du compte</small><strong>${eur(balance(a))}</strong><em>${esc(a.name)}</em></span><span class="deck-status">${selected?'✓':''}</span></span></button>`}).join('');
  const extra=accounts.length>3?'<div class="deck-extra">'+accounts.slice(0,-3).map(a=>'<button onclick="selectAccount(\''+a.id+'\')">'+esc(a.name)+'</button>').join('')+'</div>':'';
  const activeLogs=active?[...S.log].filter(e=>(e.accountId||S.accounts[0]?.id)===active.id).sort((a,b)=>Number(b.t||0)-Number(a.t||0)).slice(0,3):[];
  const recent=activeLogs.length?activeLogs.map(e=>{const credit=e.k==='rev'&&Number(e.amt)>=0,desc=e.desc||e.label,stamp=new Date(e.t||Date.now()).toLocaleDateString('fr-FR',{day:'2-digit',month:'short'}),symbol=credit?'↗':'↘';return `<div class="bank-recent-row"><span class="bank-recent-icon ${credit?'income':''}">${symbol}</span><span class="bank-recent-info"><b>${esc(desc)}</b><small>${stamp} · ${esc(e.label)}</small></span><strong class="${credit?'pos':'neg'}">${credit?'+':'−'}${eur(Math.abs(Number(e.amt)))}</strong></div>`}).join(''):'<div class="bank-recent-empty">Aucune transaction sur ce compte pour le moment.</div>';
