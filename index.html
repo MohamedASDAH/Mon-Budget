@@ -1695,6 +1695,183 @@ button.g,.mb,.th{background:rgba(255,255,255,.045);border:1px solid rgba(201,170
   width:auto!important;
  }
 }
+
+/* MON BUDGET — direction artistique premium, cohérente sur toutes les pages */
+:root{
+ --premium-gold:#c7a66a;--premium-gold-2:#ead5a5;
+ --premium-radius:20px;--premium-shadow:0 18px 48px rgba(0,0,0,.22);
+ --premium-line:rgba(205,174,116,.20);
+}
+:root:not([data-theme="light"]) body{
+ background:radial-gradient(ellipse at 78% -12%,rgba(157,119,55,.13),transparent 36%),#090b10!important;
+}
+:root:not([data-theme="light"]) main{max-width:1600px}
+:root:not([data-theme="light"]) .hd{
+ padding:10px 0 22px!important;margin-bottom:22px!important;
+ border-bottom:1px solid rgba(215,190,142,.13)!important;
+}
+:root:not([data-theme="light"]) .hd h1{
+ font-size:clamp(23px,2.2vw,30px)!important;letter-spacing:-.8px!important;
+ color:#f5f0e6!important;font-weight:720!important;
+}
+:root:not([data-theme="light"]) .hd p{color:#a9a397!important}
+:root:not([data-theme="light"]) #pg .cd,
+:root:not([data-theme="light"]) #pg .kp,
+:root:not([data-theme="light"]) #pg .acard,
+:root:not([data-theme="light"]) #pg .chatbox,
+:root:not([data-theme="light"]) #pg .curve-wrap,
+:root:not([data-theme="light"]) #pg .stat,
+:root:not([data-theme="light"]) #pg .note{
+ border:1px solid var(--premium-line)!important;
+ border-radius:var(--premium-radius)!important;
+ box-shadow:0 12px 34px rgba(0,0,0,.13),inset 0 1px rgba(255,255,255,.035)!important;
+}
+:root:not([data-theme="light"]) #pg .cd{background:linear-gradient(145deg,#151820,#10131a)!important}
+:root:not([data-theme="light"]) #pg .kp{background:linear-gradient(145deg,#191b20,#111319)!important}
+:root:not([data-theme="light"]) #pg .kp b{letter-spacing:-.7px;font-variant-numeric:tabular-nums}
+:root:not([data-theme="light"]) #pg h2,:root:not([data-theme="light"]) #pg h3{
+ letter-spacing:-.35px;color:#f1eadc!important
+}
+:root:not([data-theme="light"]) #pg button,
+:root:not([data-theme="light"]) .hd button{
+ transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease!important;
+}
+:root:not([data-theme="light"]) #pg button:not(:disabled):hover,
+:root:not([data-theme="light"]) .hd button:not(:disabled):hover{
+ transform:translateY(-1px);filter:brightness(1.08)
+}
+:root:not([data-theme="light"]) #pg button.p,
+:root:not([data-theme="light"]) #pg button.primary,
+:root:not([data-theme="light"]) #pg .p,
+:root:not([data-theme="light"]) .hd .hdb{
+ background:linear-gradient(120deg,#e2c68e,#a98243)!important;
+ color:#211a0e!important;border:1px solid #f0d9a7!important;
+ box-shadow:0 7px 20px rgba(177,139,72,.18)!important;font-weight:750!important;
+}
+:root:not([data-theme="light"]) #pg input,
+:root:not([data-theme="light"]) #pg select,
+:root:not([data-theme="light"]) #pg textarea{
+ border-radius:11px!important;min-height:40px;
+}
+:root:not([data-theme="light"]) #pg :is(input,select,textarea):focus{
+ outline:none!important;border-color:#c7a66a!important;
+ box-shadow:0 0 0 3px rgba(199,166,106,.16)!important;
+}
+:root:not([data-theme="light"]) #sb{
+ background:linear-gradient(180deg,#101217,#0b0d12)!important;
+ border-right:1px solid rgba(205,174,116,.15)!important;
+}
+:root:not([data-theme="light"]) #sb .ni.on{
+ background:linear-gradient(100deg,rgba(199,166,106,.19),rgba(199,166,106,.055))!important;
+ border:1px solid rgba(199,166,106,.25)!important;color:#ecd6a8!important;
+}
+:root:not([data-theme="light"]) #bn{
+ background:rgba(14,16,21,.94)!important;border-top:1px solid var(--premium-line)!important;
+ backdrop-filter:blur(18px);
+}
+:root:not([data-theme="light"]) #pg .pill,
+:root:not([data-theme="light"]) #pg .tag{border-radius:30px}
+:root:not([data-theme="light"]) #pg table{border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:12px}
+:root:not([data-theme="light"]) #pg th{color:#d8c49d!important}
+:root:not([data-theme="light"]) #pg tr+tr td{border-top:1px solid rgba(255,255,255,.055)}
+:root:not([data-theme="light"]) #pg .account-widget{box-shadow:0 22px 60px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.08)!important}
+:root:not([data-theme="light"]) #pg .hero{border-radius:22px!important;box-shadow:0 18px 44px rgba(0,0,0,.25)!important}
+:root:not([data-theme="light"]) #pg .tx,
+:root:not([data-theme="light"]) #pg .ti{border-radius:14px}
+:root:not([data-theme="light"]) #pg :focus-visible,
+:root:not([data-theme="light"]) #sb :focus-visible,
+:root:not([data-theme="light"]) #bn :focus-visible{
+ outline:2px solid #d9bd83!important;outline-offset:3px!important;
+}
+
+/* Thème clair premium : ivoire, encre et champagne, sans texte pâle sur fond blanc */
+:root[data-theme="light"]{
+ --bg:#f4f2ed!important;--sb:#fbfaf7!important;--cd:#fffefa!important;
+ --in:#fff!important;--bd:#e3ded2!important;--tx:#252a32!important;
+ --mu:#69717d!important;--nv:#f1eee7!important;
+ --shd:0 14px 38px rgba(42,39,31,.07)!important;
+ --ac:#98753e!important;--hv:#c7a66a12!important;
+ background:#f4f2ed!important;
+}
+:root[data-theme="light"] body{background:linear-gradient(135deg,#f7f5f0,#eeece6)!important;color:#252a32!important}
+:root[data-theme="light"] main{max-width:1600px}
+:root[data-theme="light"] .hd{
+ padding:10px 0 22px!important;margin-bottom:22px!important;
+ border-bottom:1px solid #e1d9c9!important;
+}
+:root[data-theme="light"] .hd h1{font-size:clamp(23px,2.2vw,30px)!important;letter-spacing:-.8px!important;color:#242a32!important;font-weight:750!important}
+:root[data-theme="light"] .hd p{color:#69717d!important}
+:root[data-theme="light"] #pg .cd,
+:root[data-theme="light"] #pg .kp,
+:root[data-theme="light"] #pg .acard,
+:root[data-theme="light"] #pg .chatbox,
+:root[data-theme="light"] #pg .curve-wrap,
+:root[data-theme="light"] #pg .stat,
+:root[data-theme="light"] #pg .note{
+ background:#fffefa!important;border:1px solid #e5dfd3!important;
+ border-radius:20px!important;box-shadow:0 12px 32px rgba(42,39,31,.055)!important;
+}
+:root[data-theme="light"] #pg :is(h1,h2,h3,h4,h5,b,strong,.title,.value,.tn){
+ color:#252a32!important;
+}
+:root[data-theme="light"] #pg :is(p,small,label,.mu,.muted,.hint,.desc,.sub,.gt,.caption){
+ color:#68717e!important;opacity:1!important;
+}
+:root[data-theme="light"] #pg .kp b{font-variant-numeric:tabular-nums;letter-spacing:-.7px}
+:root[data-theme="light"] #pg button,
+:root[data-theme="light"] .hd button{
+ transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease,background .18s ease!important;
+}
+:root[data-theme="light"] #pg button:not(:disabled):hover,
+:root[data-theme="light"] .hd button:not(:disabled):hover{transform:translateY(-1px)}
+:root[data-theme="light"] #pg button.p,
+:root[data-theme="light"] #pg button.primary,
+:root[data-theme="light"] #pg .p,
+:root[data-theme="light"] .hd .hdb{
+ background:linear-gradient(120deg,#d7bd88,#b18d52)!important;
+ color:#211a0e!important;border:1px solid #c7a66a!important;
+ box-shadow:0 6px 17px rgba(150,116,58,.15)!important;font-weight:750!important;
+}
+:root[data-theme="light"] #pg input,
+:root[data-theme="light"] #pg select,
+:root[data-theme="light"] #pg textarea{
+ background:#fff!important;color:#252a32!important;border:1px solid #d8d2c7!important;
+ border-radius:11px!important;
+}
+:root[data-theme="light"] #pg :is(input,select,textarea):focus{
+ outline:none!important;border-color:#ad8a4d!important;
+ box-shadow:0 0 0 3px rgba(173,138,77,.14)!important;
+}
+:root[data-theme="light"] #sb{
+ background:#fbfaf7!important;border-right:1px solid #e5dfd3!important;
+ box-shadow:4px 0 24px rgba(42,39,31,.035)!important;
+}
+:root[data-theme="light"] #sb .ni.on{
+ background:linear-gradient(100deg,#f0e8d8,#faf7f0)!important;
+ border:1px solid #e3d4b7!important;color:#76592c!important;
+}
+:root[data-theme="light"] #bn{
+ background:rgba(251,250,247,.95)!important;border-top:1px solid #e5dfd3!important;
+ backdrop-filter:blur(18px);
+}
+:root[data-theme="light"] #pg th{color:#76592c!important}
+:root[data-theme="light"] #pg tr+tr td{border-top:1px solid #eee9df}
+:root[data-theme="light"] #pg .account-widget{
+ box-shadow:0 20px 48px rgba(25,22,15,.17)!important;
+}
+:root[data-theme="light"] #pg :focus-visible,
+:root[data-theme="light"] #sb :focus-visible,
+:root[data-theme="light"] #bn :focus-visible{
+ outline:2px solid #a98449!important;outline-offset:3px!important;
+}
+@media(max-width:760px){
+ :root:not([data-theme="light"]) .hd,:root[data-theme="light"] .hd{padding-bottom:15px!important;margin-bottom:16px!important}
+ :root:not([data-theme="light"]) #pg .cd,:root[data-theme="light"] #pg .cd{border-radius:16px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ :root #pg *,:root #sb *,:root #bn *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+
 </style>
 </head>
 <body>
