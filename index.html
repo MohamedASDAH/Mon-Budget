@@ -1004,24 +1004,25 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 :root[data-theme="light"] .curve-wrap.premium-forecast .curve-legend{border-color:#eee8dd;color:#737b87}
 @media(max-width:650px){.curve-wrap.premium-forecast{padding:16px 11px 13px}.curve-wrap.premium-forecast .curve-svg{min-height:195px}.curve-wrap.premium-forecast .curve-legend{gap:12px 16px}}
 
-/* Finary-inspired patrimoine curve: clean gold area, compact header, no forecast overlay */
-.curve-wrap.finary-curve{padding:17px 17px 12px;border:1px solid rgba(217,183,125,.13);border-radius:17px;background:linear-gradient(180deg,#0d0d0e 0%,#11100e 100%);box-shadow:inset 0 1px rgba(255,255,255,.025);color:#f5f0e7}
+/* Finary patrimoine chart: dark canvas, fine champagne curve and warm filled area */
+.curve-wrap.finary-curve{padding:18px 16px 12px;border:0;border-radius:13px;background:#080808;box-shadow:none;color:#f5f3ee}
 .curve-wrap.finary-curve:before{display:none}
-.finary-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#a9a49b}
-.finary-title{font-size:12px;letter-spacing:.15px;color:#b8b1a5;font-weight:550}
-.finary-change,.finary-change-right{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
+.finary-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;color:#a9a49b}
+.finary-title{font-size:13px;letter-spacing:.1px;color:#aaa9a6;font-weight:500;text-align:center}
+.finary-change,.finary-change-right{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap;color:#75b99b}
+.finary-change{text-align:left}.finary-change-right{text-align:right}
 .finary-change small{font-size:10px;font-weight:450;color:#77736c}
-.finary-change.pos,.finary-change-right{color:#77b89b}.finary-change.neg{color:#d68d82}
-.finary-total{font-size:29px;line-height:1.18;font-weight:720;letter-spacing:-1px;text-align:center;color:#faf8f3;margin:7px 0 1px;font-variant-numeric:tabular-nums}
-.finary-period{text-align:center;font-size:10px;text-transform:capitalize;color:#77736c;margin:5px 0 0}
-.curve-wrap.finary-curve .curve-chart-shell{margin-top:2px}
-.curve-wrap.finary-curve .curve-svg{min-height:0;height:auto}
-.curve-wrap.finary-curve .curve-line{filter:drop-shadow(0 1px 2px rgba(217,183,125,.12))}
-.curve-wrap.finary-curve .curve-legend{margin:4px 0 0;padding:0;border:0;justify-content:flex-start;font-size:10px;color:#8d887f}
-.curve-wrap.finary-curve .leg-real{background:#d9b77d;box-shadow:0 0 7px #d9b77d55}
-.curve-wrap.finary-curve .curve-footnote{margin:9px 2px 0;color:#716d66;font-size:9px}
-.curve-wrap.finary-curve+.curve-tooltip{background:#171512;border-color:#393126;color:#f5f0e7}
-:root[data-theme=light] .curve-wrap.finary-curve{background:linear-gradient(180deg,#191714,#211e19);border-color:#4b4030}
+.finary-change.neg,.finary-change-right.neg{color:#d68d82}
+.finary-total{font-size:29px;line-height:1.18;font-weight:720;letter-spacing:-.8px;text-align:center;color:#fafafa;margin:7px 0 3px;font-variant-numeric:tabular-nums}
+.finary-period{text-align:center;font-size:10px;text-transform:capitalize;color:#77736c;margin:3px 0 0}
+.curve-wrap.finary-curve .curve-chart-shell{margin-top:8px}
+.curve-wrap.finary-curve .curve-svg{display:block;min-height:0;height:auto;width:100%}
+.curve-wrap.finary-curve .curve-line{filter:none}
+.curve-wrap.finary-curve .curve-legend,.curve-wrap.finary-curve .curve-footnote{display:none}
+.curve-wrap.finary-curve .curve-tooltip{margin-top:8px;background:#171512;border-color:#393126;color:#f5f0e7}
+.curve-wrap.finary-curve #todayHalo,.curve-wrap.finary-curve #todayDot{display:none}
+:root[data-theme=light] .curve-wrap.finary-curve{background:#080808;border-color:transparent;color:#f5f3ee}
+@media(max-width:650px){.curve-wrap.finary-curve{padding:16px 10px 10px}.finary-total{font-size:27px}.curve-wrap.finary-curve .curve-chart-shell{margin-top:7px}}
 
 </style>
 
@@ -2319,9 +2320,9 @@ function bal(big){
  const all=P.map(p=>p.v);let lo=Math.min(...all),hi=Math.max(...all);
  if(hi===lo){hi+=1;lo-=1}
  const pad=Math.max((hi-lo)*.22,Math.max(1,Math.abs(hi)*.025));lo-=pad;hi+=pad;
- const W=700,H=big?310:270,L=12,R=12,Tp=66,B=34,
+ const W=700,H=big?360:340,L=12,R=12,Tp=14,B=34,
  X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B;
- const col='#d9b77d',light='#f0d6a6';
+ const col='#c9a978',light='#e4c99d';
  const pts=P.map(p=>({x:X(p.d),y:Y(p.v)}));
  const line=pts.length===1?'M'+pts[0].x+' '+pts[0].y:pts.slice(0,-1).map((p,i)=>{
   const p0=pts[Math.max(0,i-1)],p1=p,p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];
@@ -2330,14 +2331,14 @@ function bal(big){
  }).join(' ');
  const area=line+' L'+X(td).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
  const fmt=v=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:0}).format(v)+' €';
- const grid=Array.from({length:4},(_,i)=>{const yy=Tp+(H-Tp-B)*i/3;return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="#c9b99d" stroke-opacity="'+(i===3?'.12':'.055')+'" stroke-width="1"/>'}).join('');
+ const grid='';
  const days=[...new Set([1,Math.round(D/3),Math.round(D*2/3),D].filter(d=>d<=D))];
  const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-9)+'" text-anchor="'+(d===1?'start':d===D?'end':'middle')+'" font-size="11" fill="var(--mu)" opacity=".72">'+(d===1?'1 '+mn.slice(0,3):d+' '+mn.slice(0,3))+'</text>').join('');
  const todayX=X(td),actualY=Y(current);
  const summary=big?'<div class="stat curve-stats"><div><small>Solde actuel</small><b>'+eur(current)+'</b></div><div><small>Variation du mois</small><b class="'+cls(change)+'">'+(change>=0?'+':'')+eur(change)+'</b></div><div><small>Dépenses moyennes / jour</small><b>'+eur(spentPerDay)+'</b></div><div><small>Jours restants</small><b>'+dayLeft+'</b></div></div>':'';
  const html=summary+
  '<div class="curve-wrap premium-forecast finary-curve">'+
- '<div class="finary-head"><div class="finary-change '+(change>=0?'pos':'neg')+'">'+(change>=0?'+':'')+eur(change)+' <small>ce mois-ci</small></div><div class="finary-title">Évolution du solde</div><div class="finary-change-right">'+(change>=0?'+':'')+pct.toFixed(1).replace('.',',')+' %</div></div>'+
+ '<div class="finary-head"><div class="finary-change '+(change>=0?'pos':'neg')+'">'+(change>=0?'+':'')+eur(change)+' <small>ce mois-ci</small></div><div class="finary-title">Patrimoine financier</div><div class="finary-change-right '+(change>=0?'pos':'neg')+'">'+(change>=0?'+':'')+pct.toFixed(1).replace('.',',')+' %</div></div>'+
  '<div class="finary-total">'+eur(current)+'</div>'+
  '<div class="curve-period finary-period">'+mn+' '+y+'</div>'+
  '<div class="curve-chart-shell"><svg id="cs" class="curve-svg finary-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" tabindex="0" aria-label="Courbe de l’évolution du solde à partir des transactions enregistrées. Utilise les flèches gauche et droite pour parcourir les jours.">'+
@@ -2346,7 +2347,7 @@ function bal(big){
  '<linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="100%" stop-color="'+col+'"/></linearGradient>'+
  '</defs>'+grid+
  '<path d="'+area+'" fill="url(#curveArea)"/>'+
- '<path d="'+line+'" class="curve-line" fill="none" stroke="url(#curveStroke)" stroke-width="2.05" stroke-linecap="round" stroke-linejoin="round"/>'+
+ '<path d="'+line+'" class="curve-line" fill="none" stroke="url(#curveStroke)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>'+
  '<circle id="todayHalo" cx="'+todayX.toFixed(2)+'" cy="'+actualY.toFixed(2)+'" r="8" fill="'+col+'" opacity=".13"/>'+
  '<circle id="todayDot" cx="'+todayX.toFixed(2)+'" cy="'+actualY.toFixed(2)+'" r="3.4" fill="'+light+'" stroke="#17130d" stroke-width="1.5"/>'+
  xl+'<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
