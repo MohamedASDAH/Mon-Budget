@@ -610,6 +610,41 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .deck-card .deck-number{font-size:12px;letter-spacing:2px;color:#eee9df;text-shadow:0 1px 4px #000}.deck-card .deck-chip{background:linear-gradient(135deg,#e6d8b2,#82775f);box-shadow:inset 0 0 0 1px #fff8}.deck-card .deck-bottom strong{font-size:22px;text-shadow:0 2px 8px #0008}.deck-card .deck-status{background:#ffffff18;border:1px solid #ffffff2a;border-radius:50%;width:25px;height:25px;display:grid;place-items:center}
 .account-add-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.account-manage select{flex-basis:100%;min-width:0}
 @media(max-width:560px){.account-add-grid{grid-template-columns:1fr}.deck-card .deck-number{font-size:11px}}
+
+/* Signature Obsidian Gold — carte principale inspirée du premier visuel */
+.deck-card.card-art-obsidian{
+ background:
+   radial-gradient(ellipse at 100% 0%,rgba(220,178,91,.22),transparent 42%),
+   linear-gradient(145deg,#050505 0%,#11100e 48%,#030303 100%);
+ border:1px solid rgba(222,188,117,.82);
+ box-shadow:0 20px 42px #000b,inset 0 1px 0 #fff3,inset 0 -1px 0 #c99c4b55;
+}
+.deck-card.card-art-obsidian:before{
+ inset:0;
+ background:
+  linear-gradient(145deg,transparent 0 37%,rgba(210,169,91,.13) 38%,transparent 39% 100%),
+  linear-gradient(155deg,transparent 0 61%,rgba(226,188,112,.24) 61.4%,transparent 62.2%),
+  radial-gradient(ellipse at 0% 100%,rgba(188,139,54,.22),transparent 46%);
+}
+.deck-card.card-art-obsidian:after{
+ inset:0;
+ opacity:.95;
+ background:
+  repeating-radial-gradient(ellipse at 112% -18%,transparent 0 13px,rgba(232,202,145,.11) 14px 15px,transparent 16px 27px),
+  linear-gradient(115deg,transparent 28%,rgba(255,255,255,.055) 48%,transparent 66%);
+}
+.deck-card.card-art-obsidian .deck-top b,
+.deck-card.card-art-obsidian .deck-network{color:#e7c783!important}
+.deck-card.card-art-obsidian .deck-chip{
+ background:linear-gradient(135deg,#f0d99e 0%,#a98749 48%,#e8d19a 100%);
+ border:1px solid #f6e4b5;
+ box-shadow:0 2px 8px #0008,inset 0 0 0 1px #fff5;
+}
+.deck-card.card-art-obsidian .deck-number{color:#e6c88e;letter-spacing:2.2px;font-size:13px}
+.deck-card.card-art-obsidian .deck-bottom small{color:#d1c2a2}
+.deck-card.card-art-obsidian .deck-bottom strong{color:#fff0ce;font-size:23px}
+.deck-card.card-art-obsidian .deck-bottom em{color:#d8c49a;letter-spacing:1px;text-transform:uppercase}
+.deck-card.card-art-obsidian .deck-status{color:#f3d58e;border-color:#c7a15e88;background:#c6a96b1c}
 </style>
 
 <style id="light-mode-contrast-fix">
