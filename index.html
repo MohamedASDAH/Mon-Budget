@@ -1553,6 +1553,20 @@ button.g,.mb,.th{background:rgba(255,255,255,.045);border:1px solid rgba(201,170
 :root[data-theme="light"] #pg :is(tr,td,th){border-color:#d8dfE9!important}
 :root[data-theme="light"] #pg :is(.toast,.modal,.pop,.dropdown,.menu,.select-menu){color:#202a3a}
 :root[data-theme="light"] #pg svg text{fill:currentColor}
+
+/* Bouton de renommage du compte : plus grand et facile à toucher */
+.account-manage button:not(.danger){
+ flex:0 0 100%;
+ width:100%;
+ min-height:48px;
+ padding:13px 18px;
+ font-size:14px;
+ font-weight:700;
+ border-radius:12px;
+ letter-spacing:.1px;
+}
+.account-manage input{flex:0 0 100%;min-height:46px;font-size:15px;padding:11px 13px}
+.account-manage{gap:10px}
 </style>
 </head>
 <body>
