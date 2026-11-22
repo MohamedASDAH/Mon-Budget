@@ -1872,6 +1872,31 @@ button.g,.mb,.th{background:rgba(255,255,255,.045);border:1px solid rgba(201,170
  :root #pg *,:root #sb *,:root #bn *{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
 
+
+/* Graphique de prévision : lisible, tactile et responsive */
+.curve-wrap.premium-forecast{padding:20px 20px 15px;border-radius:22px;background:linear-gradient(145deg,rgba(18,20,29,.97),rgba(12,14,20,.98));border:1px solid rgba(199,166,106,.22);box-shadow:0 18px 48px rgba(0,0,0,.18)}
+.curve-chart-shell{width:100%;min-width:0;overflow:hidden}
+.curve-wrap.premium-forecast .curve-svg{display:block;width:100%;height:auto;min-height:210px;overflow:visible;touch-action:pan-y;cursor:crosshair}
+.curve-wrap.premium-forecast .curve-hit{cursor:crosshair;pointer-events:all}
+.curve-wrap.premium-forecast .curve-line{filter:drop-shadow(0 0 5px rgba(90,220,190,.2))}
+.curve-wrap.premium-forecast .curve-legend{gap:10px 22px;margin-top:15px}
+.curve-wrap.premium-forecast .curve-footnote{font-size:11px;line-height:1.55;color:#969ba7;margin:12px 3px 0}
+.curve-wrap.premium-forecast .curve-legend span{display:inline-flex;align-items:center;gap:8px}
+.curve-wrap.premium-forecast .curve-legend i{display:inline-block;width:20px;height:3px;border-radius:5px}
+.curve-wrap.premium-forecast .curve-legend .leg-real{background:#42d6b4;box-shadow:0 0 9px #42d6b455}
+.curve-wrap.premium-forecast .curve-legend .leg-ideal{background:#a99ae8}
+.curve-wrap.premium-forecast .curve-legend .leg-forecast{height:0;border-top:2px solid #c3b3ec;border-radius:0}
+:root[data-theme="light"] .curve-wrap.premium-forecast{background:linear-gradient(145deg,#fffefa,#f5f1e8);border-color:#e1d4bb;box-shadow:0 14px 34px rgba(65,53,31,.07)}
+:root[data-theme="light"] .curve-wrap.premium-forecast .curve-footnote{color:#69717d}
+:root[data-theme="light"] .curve-wrap.premium-forecast .curve-legend{color:#5d6572}
+:root[data-theme="light"] .curve-wrap.premium-forecast .curve-svg text{fill:#69717d}
+@media(max-width:650px){
+ .curve-wrap.premium-forecast{padding:14px 10px 12px;border-radius:17px}
+ .curve-wrap.premium-forecast .curve-svg{min-height:170px}
+ .curve-wrap.premium-forecast .curve-legend{gap:9px 13px;font-size:10px}
+ .curve-wrap.premium-forecast .curve-legend i{width:15px}
+}
+
 </style>
 </head>
 <body>
@@ -2133,15 +2158,34 @@ function donut(items,sz){const tot=sum(items,'v')||1;let a=0;const R=70,C=2*Math
 function legend(items){const tot=sum(items,'v')||1;return items.map((x,i)=>`<div class="lg ${U.sel===i?'on':''}" onclick="U.sel=${U.sel===i?-1:i};go()"><i style="background:${COL[i%8]}"></i><span>${esc(x.l)}</span><span class="mu">${Math.round(x.v/tot*100)}%</span><b>${eur(x.v)}</b></div>`).join('')}
 function ring(p,sz,c){const R=34,C=2*Math.PI*R,f=Math.min(1,Math.max(0,p))*C;return`<svg viewBox="0 0 80 80" style="width:${sz}px"><circle cx="40" cy="40" r="${R}" fill="none" stroke="var(--bd)" stroke-width="8"/><circle class="an" cx="40" cy="40" r="${R}" fill="none" stroke="${c||'#7957E8'}" stroke-width="8" stroke-linecap="round" stroke-dasharray="${f} ${C}" transform="rotate(-90 40 40)"/><text x="40" y="45" text-anchor="middle" font-size="15" font-weight="700" fill="var(--tx)">${Math.round(p*100)}%</text></svg>`}
 function bal(big){
- const T=totals(),now=new Date(),y=now.getFullYear(),mo=now.getMonth(),D=new Date(y,mo+1,0).getDate(),td=now.getDate(),mn=now.toLocaleDateString('fr-FR',{month:'long'});
- const start=S.solde+T.rev-T.ep-T.go,end=start-T.bud,per=Array(D+1).fill(0),ev=Array.from({length:D+1},()=>[]);
- for(const e of S.log){if(e.k==='rev')continue;const d=new Date(e.t),dy=d.getFullYear()===y&&d.getMonth()===mo?d.getDate():1;per[dy]+=e.amt;ev[dy].push(e)}
- const P=[{d:0,v:start}];let b=start;for(let d=1;d<=td;d++){b-=per[d];P.push({d,v:b})}
- const ideal=d=>start-T.bud*d/D,spent=start-b,proj=start-spent/td*D,all=[...P.map(p=>p.v),end,proj];
- let lo=Math.min(...all),hi=Math.max(...all);if(hi===lo){hi+=1;lo-=1}
- const pd=(hi-lo)*.16;lo-=pd;hi+=pd;
- const W=700,H=big?286:246,L=62,R=18,Tp=20,B=34,X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B;
- const good=b>=ideal(td),col=good?'#35dfc4':'#ff7885',light=good?'#8affeb':'#ffb0b8';
+ const T=totals(),now=new Date(),y=now.getFullYear(),mo=now.getMonth(),
+ D=new Date(y,mo+1,0).getDate(),td=now.getDate(),mn=now.toLocaleDateString('fr-FR',{month:'long'});
+ const net=Array(D+1).fill(0),per=Array(D+1).fill(0),ev=Array.from({length:D+1},()=>[]);
+ for(const e of S.log||[]){
+  const d=new Date(Number(e.t)||Number(e.createdAt)||0);
+  if(!Number.isFinite(d.getTime())||d.getFullYear()!==y||d.getMonth()!==mo)continue;
+  const day=d.getDate();if(day>td)continue;
+  const amount=Number(e.amt)||0;
+  const impact=e.k==='rev'?amount:-amount;
+  net[day]+=impact;
+  if(e.k!=='rev')per[day]+=Math.max(0,amount);
+  ev[day].push(e);
+ }
+ const netTotal=net.slice(1,td+1).reduce((a,v)=>a+v,0);
+ // Le point d'aujourd'hui correspond toujours au disponible prévisionnel affiché ailleurs.
+ // Le point de départ est déduit des transactions réellement enregistrées pour éviter les doubles comptes.
+ const start=r2(T.rest-netTotal),P=[{d:0,v:start}];
+ let balance=start;
+ for(let d=1;d<=td;d++){balance+=net[d];P.push({d,v:r2(balance)})}
+ const current=r2(T.rest),spentPerDay=td?T.dep/td:0,
+ proj=r2(current-spentPerDay*(D-td)),end=start-T.bud;
+ const ideal=d=>start-T.bud*d/D,all=[...P.map(p=>p.v),proj,end,current];
+ let lo=Math.min(...all),hi=Math.max(...all);
+ if(hi===lo){hi+=1;lo-=1}
+ const pad=Math.max((hi-lo)*.16,Math.max(1,Math.abs(hi)*.025));lo-=pad;hi+=pad;
+ const W=700,H=big?300:246,L=72,R=20,Tp=22,B=36,
+ X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B;
+ const good=current>=ideal(td),col=good?'#35d6b4':'#e9a45b',light=good?'#a3f1dc':'#ffd09a';
  const pts=P.map(p=>({x:X(p.d),y:Y(p.v)}));
  const line=pts.length===1?'M'+pts[0].x+' '+pts[0].y:pts.slice(0,-1).map((p,i)=>{
   const p0=pts[Math.max(0,i-1)],p1=p,p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];
@@ -2149,66 +2193,63 @@ function bal(big){
   return(i===0?'M'+p1.x.toFixed(2)+' '+p1.y.toFixed(2):'')+' C'+c1.x.toFixed(2)+' '+c1.y.toFixed(2)+' '+c2.x.toFixed(2)+' '+c2.y.toFixed(2)+' '+p2.x.toFixed(2)+' '+p2.y.toFixed(2);
  }).join(' ');
  const area=line+' L'+X(td).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
- const idealLine='M'+X(0).toFixed(2)+' '+Y(start).toFixed(2)+' C'+X(D*.32).toFixed(2)+' '+Y(start+(end-start)*.28).toFixed(2)+' '+X(D*.68).toFixed(2)+' '+Y(start+(end-start)*.72).toFixed(2)+' '+X(D).toFixed(2)+' '+Y(end).toFixed(2);
+ const idealLine='M'+X(0).toFixed(2)+' '+Y(start).toFixed(2)+' L'+X(D).toFixed(2)+' '+Y(end).toFixed(2);
  const idealArea=idealLine+' L'+X(D).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
  const fmt=v=>new Intl.NumberFormat('fr-FR',{notation:'compact',maximumFractionDigits:1}).format(v)+' €';
- const grid=Array.from({length:5},(_,i)=>{const v=hi-(hi-lo)*i/4,yy=Y(v);return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="var(--mu)" stroke-opacity="'+(i===4?'.20':'.12')+'" stroke-dasharray="none"/><text x="'+(L-10)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="var(--mu)" opacity=".8">'+fmt(v)+'</text>'}).join('');
+ const grid=Array.from({length:5},(_,i)=>{const v=hi-(hi-lo)*i/4,yy=Y(v);return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="var(--mu)" stroke-opacity="'+(i===4?'.22':'.12')+'"/><text x="'+(L-12)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="var(--mu)" opacity=".9">'+fmt(v)+'</text>'}).join('');
  const days=[...new Set([1,5,10,15,20,25,D].filter(d=>d<=D))];
- const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10" fill="var(--mu)">'+d+'</text>').join('');
- const marks=P.filter(p=>p.d>0&&per[p.d]>0).map(p=>'<circle cx="'+X(p.d).toFixed(2)+'" cy="'+Y(p.v).toFixed(2)+'" r="3.1" fill="'+col+'" stroke="var(--cd)" stroke-width="1.5" class="curve-event"/>').join('');
- const actualEnd=Y(b),todayX=X(td),projectX=X(D),projectY=Y(proj);
- const last=pts[pts.length-1]||{x:todayX,y:actualEnd},prev=pts[Math.max(0,pts.length-2)]||last,dx=Math.max(1,last.x-prev.x),dy=last.y-prev.y,span=projectX-todayX;const projectionPath='M'+todayX.toFixed(2)+' '+actualEnd.toFixed(2)+' C'+(todayX+span*.34).toFixed(2)+' '+(actualEnd+Math.max(-24,Math.min(24,dy/dx*span*.34))).toFixed(2)+' '+(projectX-span*.34).toFixed(2)+' '+(projectY-Math.max(-24,Math.min(24,dy/dx*span*.34))).toFixed(2)+' '+projectX.toFixed(2)+' '+projectY.toFixed(2);
- const dayLeft=D-td+1;
- const summary=big?'<div class="stat curve-stats"><div><small>Disponible prévisionnel</small><b>'+eur(b)+'</b></div><div><small>Fin de mois estimée</small><b class="'+cls(proj)+'">'+eur(proj)+'</b></div><div><small>Moyenne dépensée / jour</small><b>'+eur(spent/td)+'</b></div><div><small>Disponible / jour restant</small><b>'+eur(Math.max(0,T.rest)/dayLeft)+'</b></div></div>':'';
+ const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-10)+'" text-anchor="middle" font-size="10" fill="var(--mu)">'+d+'</text>').join('');
+ const marks=P.filter(p=>p.d>0&&ev[p.d].length).map(p=>'<circle cx="'+X(p.d).toFixed(2)+'" cy="'+Y(p.v).toFixed(2)+'" r="3.4" fill="'+col+'" stroke="var(--cd)" stroke-width="1.5"/>').join('');
+ const todayX=X(td),actualY=Y(current),projectX=X(D),projectY=Y(proj),span=projectX-todayX;
+ const projectionPath='M'+todayX.toFixed(2)+' '+actualY.toFixed(2)+' C'+(todayX+span*.34).toFixed(2)+' '+(actualY+(projectY-actualY)*.28).toFixed(2)+' '+(projectX-span*.34).toFixed(2)+' '+(projectY-(projectY-actualY)*.28).toFixed(2)+' '+projectX.toFixed(2)+' '+projectY.toFixed(2);
+ const dayLeft=Math.max(0,D-td);
+ const summary=big?'<div class="stat curve-stats"><div><small>Disponible actuel</small><b>'+eur(current)+'</b></div><div><small>Fin de mois estimée</small><b class="'+cls(proj)+'">'+eur(proj)+'</b></div><div><small>Dépenses moyennes / jour</small><b>'+eur(spentPerDay)+'</b></div><div><small>Jours restants</small><b>'+dayLeft+'</b></div></div>':'';
  const html=summary+
- '<div class="curve-wrap">'+
- '<div class="curve-topline"><span class="curve-period">'+mn+' '+y+'</span><span class="curve-status"><i style="background:'+col+'"></i>'+(good?'Dans le rythme':'Au-dessus du rythme')+'</span></div>'+
- '<svg id="cs" class="curve-svg" viewBox="0 0 '+W+' '+H+'" role="img" tabindex="0" aria-label="Évolution du disponible budgétaire sur le mois. Utilise les flèches gauche et droite pour parcourir les jours.">'+
+ '<div class="curve-wrap premium-forecast">'+
+ '<div class="curve-topline"><span class="curve-period">'+mn+' '+y+'</span><span class="curve-status"><i style="background:'+col+'"></i>'+(good?'Dans le rythme':'À surveiller')+'</span></div>'+
+ '<div class="curve-chart-shell"><svg id="cs" class="curve-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" tabindex="0" aria-label="Graphique du disponible budgétaire : historique réel jusqu’à aujourd’hui et estimation jusqu’à la fin du mois. Utilise les flèches gauche et droite pour parcourir les jours.">'+
  '<defs>'+
- '<linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f36b9a" stop-opacity=".78"/><stop offset="58%" stop-color="#b64c83" stop-opacity=".35"/><stop offset="100%" stop-color="#b64c83" stop-opacity=".015"/></linearGradient>'+ 
- '<linearGradient id="curveIdealArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8297ff" stop-opacity=".68"/><stop offset="62%" stop-color="#6576d8" stop-opacity=".30"/><stop offset="100%" stop-color="#6576d8" stop-opacity=".015"/></linearGradient>'+ 
- '<linearGradient id="curveIdealStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#a8b6ff"/><stop offset="100%" stop-color="#7189ff"/></linearGradient>'+
- '<linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="55%" stop-color="'+col+'"/><stop offset="100%" stop-color="'+light+'"/></linearGradient>'+
- '<radialGradient id="curvePoint"><stop offset="0%" stop-color="'+light+'" stop-opacity=".95"/><stop offset="100%" stop-color="'+col+'" stop-opacity=".15"/></radialGradient>'+
- '<filter id="curveGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
- '</defs>'+
- grid+
- '<path d="'+idealArea+'" fill="url(#curveIdealArea)" class="curve-fill curve-ideal-fill"/>'+ 
- '<path d="'+idealLine+'" fill="none" stroke="url(#curveIdealStroke)" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" opacity=".92"/>'+
- '<path d="'+area+'" fill="url(#curveArea)" class="curve-fill curve-real-fill"/>'+
- '<path d="'+projectionPath+'" class="curve-projection" fill="none" stroke="#42d6c5" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" opacity=".96"/>'+
- '<path d="'+line+'" fill="none" stroke="#f36b9a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity=".22" filter="url(#curveGlow)" vector-effect="non-scaling-stroke"/>'+
- '<path d="'+line+'" class="curve-line" pathLength="1" fill="none" stroke="#f47aa5" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
+ '<linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity=".32"/><stop offset="100%" stop-color="'+col+'" stop-opacity=".015"/></linearGradient>'+
+ '<linearGradient id="curveIdealArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9b8be8" stop-opacity=".13"/><stop offset="100%" stop-color="#9b8be8" stop-opacity=".01"/></linearGradient>'+
+ '<linearGradient id="curveIdealStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#b7a7f4"/><stop offset="100%" stop-color="#8f7bd8"/></linearGradient>'+
+ '<linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="100%" stop-color="'+col+'"/></linearGradient>'+
+ '<filter id="curveGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="4" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
+ '</defs>'+grid+
+ '<path d="'+idealArea+'" fill="url(#curveIdealArea)"/>'+
+ '<path d="'+idealLine+'" fill="none" stroke="url(#curveIdealStroke)" stroke-width="2" stroke-linecap="round" opacity=".8"/>'+
+ '<path d="'+area+'" fill="url(#curveArea)"/>'+
+ '<path d="'+projectionPath+'" class="curve-projection" fill="none" stroke="'+light+'" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>'+
+ '<path d="'+line+'" fill="none" stroke="'+col+'" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity=".16" filter="url(#curveGlow)"/>'+
+ '<path d="'+line+'" class="curve-line" fill="none" stroke="url(#curveStroke)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>'+
  marks+
  '<line id="todayGuide" x1="'+todayX.toFixed(2)+'" y1="'+Tp+'" x2="'+todayX.toFixed(2)+'" y2="'+bs+'" stroke="'+col+'" stroke-width="1.2" opacity=".38"/>'+
- '<circle id="todayHalo" cx="'+todayX.toFixed(2)+'" cy="'+actualEnd.toFixed(2)+'" r="12" fill="url(#curvePoint)" opacity=".55"/>'+
- '<circle id="todayDot" cx="'+todayX.toFixed(2)+'" cy="'+actualEnd.toFixed(2)+'" r="5.2" fill="'+col+'" stroke="var(--cd)" stroke-width="2.5"/>'+
- '<circle cx="'+projectX.toFixed(2)+'" cy="'+projectY.toFixed(2)+'" r="4.2" fill="#42d6c5" stroke="var(--cd)" stroke-width="2.2"/>'+
- xl+
- '<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
- '</svg>'+
- '<div class="curve-legend" aria-label="Légende du graphique"><span title="Solde calculé à partir des transactions enregistrées"><i class="leg-real"></i>Disponible budgétaire</span><span title="Trajectoire régulière pour respecter le budget prévu"><i class="leg-ideal"></i>Trajectoire cible</span><span title="Estimation du solde à la fin du mois selon le rythme actuel"><i class="leg-forecast"></i>Fin de mois estimée</span></div>'+
- '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip"></div>';
+ '<circle id="todayHalo" cx="'+todayX.toFixed(2)+'" cy="'+actualY.toFixed(2)+'" r="12" fill="'+col+'" opacity=".16"/>'+
+ '<circle id="todayDot" cx="'+todayX.toFixed(2)+'" cy="'+actualY.toFixed(2)+'" r="5.2" fill="'+col+'" stroke="var(--cd)" stroke-width="2.5"/>'+
+ '<circle cx="'+projectX.toFixed(2)+'" cy="'+projectY.toFixed(2)+'" r="4.5" fill="'+light+'" stroke="var(--cd)" stroke-width="2.2"/>'+
+ xl+'<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
+ '</svg></div>'+
+ '<div class="curve-legend" aria-label="Légende du graphique"><span><i class="leg-real"></i>Disponible calculé</span><span><i class="leg-ideal"></i>Trajectoire cible</span><span><i class="leg-forecast"></i>Prévision</span></div>'+
+ '<p class="curve-footnote">Historique calculé à partir de tes transactions enregistrées. La prévision prolonge le rythme moyen de dépenses du mois ; elle ne garantit pas le solde bancaire réel.</p>'+
+ '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip" aria-live="polite"></div>';
  AF.push(()=>{
   const ci=$(big?'ci':'cix'),sv=$('cs');if(!sv||!ci)return;
   let selected=td;
   const show=d=>{
    selected=Math.max(0,Math.min(td,d));
-   const p=P[selected],diff=p.v-ideal(selected),date=selected?selected+' '+mn:'Début du mois';
-   const items=ev[selected];
-   ci.innerHTML='<div class="curve-tip-date">'+date+'</div><div class="curve-tip-values"><div><small>Solde</small><b>'+eur(p.v)+'</b></div><div><small>Rythme idéal</small><b>'+eur(ideal(selected))+'</b></div><div><small>Écart</small><b class="'+cls(diff)+'">'+(diff>=0?'+':'')+eur(diff)+'</b></div></div>'+
-    (items.length?'<div class="curve-tip-events">'+items.map(e=>'<span>'+esc(e.desc||e.label)+' · '+eur(e.amt)+'</span>').join('')+'</div>':'<div class="curve-tip-empty">Aucune dépense enregistrée ce jour-là</div>');
-   const x=X(selected),yy=Y(p.v);
-   const guide=$('hv');if(guide){guide.setAttribute('x1',x);guide.setAttribute('x2',x);guide.setAttribute('y1',Tp);guide.setAttribute('y2',bs);guide.setAttribute('opacity','0')}
-   const tg=$('todayGuide');if(tg){tg.setAttribute('x1',x);tg.setAttribute('x2',x);tg.setAttribute('opacity','.6')}
-   const dot=$('todayDot'),halo=$('todayHalo');if(dot){dot.setAttribute('cx',x);dot.setAttribute('cy',yy)}if(halo){halo.setAttribute('cx',x);halo.setAttribute('cy',yy)}
+   const p=P[selected],diff=p.v-ideal(selected),date=selected?selected+' '+mn:'Début du mois',items=ev[selected];
+   ci.innerHTML='<div class="curve-tip-date">'+date+'</div><div class="curve-tip-values"><div><small>Disponible</small><b>'+eur(p.v)+'</b></div><div><small>Cible</small><b>'+eur(ideal(selected))+'</b></div><div><small>Écart</small><b class="'+cls(diff)+'">'+(diff>=0?'+':'')+eur(diff)+'</b></div></div>'+
+    (items.length?'<div class="curve-tip-events">'+items.map(e=>'<span>'+esc(e.desc||e.label)+' · '+(e.k==='rev'?'+':'−')+eur(Math.abs(Number(e.amt)||0))+'</span>').join('')+'</div>':'<div class="curve-tip-empty">Aucune transaction enregistrée ce jour-là</div>');
+   const x=X(selected),yy=Y(p.v),guide=$('todayGuide'),dot=$('todayDot'),halo=$('todayHalo');
+   if(guide){guide.setAttribute('x1',x);guide.setAttribute('x2',x)}
+   if(dot){dot.setAttribute('cx',x);dot.setAttribute('cy',yy)}
+   if(halo){halo.setAttribute('cx',x);halo.setAttribute('cy',yy)}
   };
   const pick=e=>{const r=sv.getBoundingClientRect(),x=(e.clientX-r.left)/r.width*W;show(Math.round((x-L)/(W-L-R)*D))};
   sv.addEventListener('pointermove',pick);sv.addEventListener('pointerdown',pick);
   sv.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key==='ArrowRight'){e.preventDefault();show(selected+(e.key==='ArrowRight'?1:-1))}else if(e.key==='Home'){e.preventDefault();show(0)}else if(e.key==='End'){e.preventDefault();show(td)}});
   show(td);
  });
- return{html,proj,spent:spent/td}
+ return{html,proj,spent:spentPerDay}
 }
 function txList(n,filter){let a=[...S.log].filter(e=>(e.accountId||S.accounts[0]?.id)===S.activeAccountId).sort((x,y)=>(filter?Number(y.t||y.createdAt||0):Number(y.createdAt||y.t||0))-(filter?Number(x.t||x.createdAt||0):Number(x.createdAt||x.t||0)));
  if(filter){const q=U.q.toLowerCase(),mn=num(U.min),sn=U.since?new Date(U.since+'T00:00:00').getTime():0,en=U.until?new Date(U.until+'T23:59:59.999').getTime():0;a=a.filter(e=>(U.ty==='all'||(U.ty==='rev')===(e.k==='rev'))&&(!U.cat||e.label===U.cat)&&(!q||((e.desc||'')+' '+e.label).toLowerCase().includes(q))&&(!mn||Math.abs(Number(e.amt))>=mn)&&(!sn||Number(e.t||0)>=sn)&&(!en||Number(e.t||0)<=en))}
