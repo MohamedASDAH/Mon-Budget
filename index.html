@@ -730,6 +730,62 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 .account-actions{margin-top:15px}.account-details{background:#111!important;border-color:#39342a!important}.account-details summary{color:#ddd!important}
 @media(max-width:760px){.bank-deck{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.deck-card:nth-child(n+3){display:none}.account-bottom-grid{grid-template-columns:1fr}.account-total-panel{min-height:170px}.account-total-chart{height:65px}}
 @media(max-width:520px){.account-widget{padding:15px!important;border-radius:19px!important}.account-heading{align-items:flex-start;gap:10px;margin-bottom:17px!important}.account-heading span>b{font-size:22px}.account-subtitle{font-size:11px;max-width:210px}.account-add-pill{padding:10px 11px!important;white-space:nowrap}.bank-deck{grid-template-columns:1fr}.deck-card,.deck-card.deck-active,.deck-card:not(.deck-active){aspect-ratio:1.72!important}.deck-card:nth-child(n+2){display:none}.bank-card-actions{gap:7px!important}.bank-card-actions button{font-size:12px!important;padding:12px 5px!important}.account-bottom-grid{gap:10px}.account-total-panel{min-height:155px}.account-recent-panel .bank-recent-row{padding:10px}.account-add-grid{grid-template-columns:1fr!important}}
+
+/* Portefeuille façon Apple Pay : pile de cartes superposées, carte active au premier plan */
+.bank-deck{
+ position:relative!important;display:block!important;
+ width:min(100%,620px)!important;height:365px!important;
+ margin:4px auto 0!important;overflow:visible!important;
+ perspective:1400px;
+}
+.bank-deck .deck-card,
+.bank-deck .deck-card.deck-active,
+.bank-deck .deck-card:not(.deck-active){
+ position:absolute!important;display:block!important;
+ top:0!important;left:50%!important;right:auto!important;
+ width:min(100%,470px)!important;height:248px!important;
+ aspect-ratio:1.89!important;min-width:0!important;
+ padding:17px 20px!important;margin:0!important;
+ transform:translateX(-50%) translateY(calc(var(--deck-i)*62px)) scale(calc(1 - var(--deck-i)*.035))!important;
+ transform-origin:top center!important;
+ z-index:calc(12 - var(--deck-i))!important;
+ opacity:1!important;border-radius:22px!important;
+ transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease!important;
+ cursor:pointer;overflow:hidden;
+}
+.bank-deck .deck-card.deck-active{
+ box-shadow:0 22px 55px #000c,0 0 0 1px #f2d18b88,0 0 28px #d6a84b45,inset 0 1px #fff5!important;
+}
+.bank-deck .deck-card:not(.deck-active){
+ box-shadow:0 14px 30px #000b,inset 0 1px #ffffff25!important;
+}
+.bank-deck .deck-card:not(.deck-active):hover{
+ transform:translateX(-50%) translateY(calc(var(--deck-i)*62px - 7px)) scale(calc(1 - var(--deck-i)*.035))!important;
+}
+.bank-deck .deck-card .deck-top{top:17px!important;left:20px!important;right:20px!important}
+.bank-deck .deck-card .deck-number{top:57%!important;left:20px!important}
+.bank-deck .deck-card .deck-bottom{left:20px!important;right:20px!important;bottom:17px!important}
+.bank-deck .deck-card .deck-bottom strong{font-size:22px!important}
+.bank-deck .deck-card .deck-status{width:27px;height:27px;border-radius:50%;background:linear-gradient(145deg,#ffe6a0,#d39b3e);color:#211707!important;display:grid;place-items:center;box-shadow:0 2px 10px #0008}
+.deck-extra{display:flex;flex-wrap:wrap;justify-content:center;gap:7px;margin:-2px auto 15px}
+.deck-extra button{background:#17140f;border:1px solid #8e713e;color:#e7c77f;border-radius:20px;padding:7px 12px;font-size:11px}
+.bank-card-actions{margin-top:4px!important}
+@media(max-width:700px){
+ .bank-deck{width:100%!important;height:330px!important}
+ .bank-deck .deck-card,.bank-deck .deck-card.deck-active,.bank-deck .deck-card:not(.deck-active){
+  width:min(100%,430px)!important;height:auto!important;aspect-ratio:1.72!important;
+  transform:translateX(-50%) translateY(calc(var(--deck-i)*55px)) scale(calc(1 - var(--deck-i)*.035))!important;
+  padding:14px 16px!important;border-radius:19px!important
+ }
+ .bank-deck .deck-card .deck-top{top:14px!important;left:16px!important;right:16px!important}
+ .bank-deck .deck-card .deck-number{left:16px!important}
+ .bank-deck .deck-card .deck-bottom{left:16px!important;right:16px!important;bottom:14px!important}
+}
+@media(max-width:430px){
+ .bank-deck{height:300px!important}
+ .bank-deck .deck-card,.bank-deck .deck-card.deck-active,.bank-deck .deck-card:not(.deck-active){height:auto!important;aspect-ratio:1.68!important}
+ .bank-deck .deck-card .deck-bottom strong{font-size:18px!important}
+}
 </style>
 
 <style id="light-mode-contrast-fix">
