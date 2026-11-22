@@ -984,6 +984,25 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 :root[data-theme="light"] .curve-wrap.premium-forecast .curve-tip-date{color:#947443!important}
 @media(max-width:650px){.curve-wrap.premium-forecast .curve-svg{min-height:205px}}
 
+
+/* Finary-inspired patrimoine curve */
+.curve-wrap.premium-forecast{padding:22px 22px 16px;border-radius:22px;background:linear-gradient(155deg,#141820 0%,#10141b 72%,#0d1118 100%);border:1px solid rgba(216,189,135,.19);box-shadow:0 18px 48px rgba(0,0,0,.17),inset 0 1px rgba(255,255,255,.035)}
+.curve-wrap.premium-forecast:before{background:linear-gradient(90deg,transparent,rgba(216,189,135,.34),transparent)}
+.curve-wrap.premium-forecast .curve-topline{align-items:center;border-bottom:0;padding:0 2px 7px;margin-bottom:0}
+.curve-wrap.premium-forecast .curve-period{font-size:12px;font-weight:600;letter-spacing:.15px;color:#aeb5c1}
+.curve-wrap.premium-forecast .curve-status{font-size:10px;color:#c7b58f;background:rgba(216,189,135,.07);border:1px solid rgba(216,189,135,.14);border-radius:20px}
+.curve-wrap.premium-forecast .curve-svg{min-height:245px;filter:none}
+.curve-wrap.premium-forecast .curve-line{stroke-width:2.8;filter:drop-shadow(0 2px 5px rgba(216,189,135,.12))}
+.curve-wrap.premium-forecast .curve-projection{stroke:#ead7ad!important;stroke-width:2!important;stroke-dasharray:4 6!important;animation:none!important;opacity:.72!important;filter:none!important}
+.curve-wrap.premium-forecast .curve-legend{justify-content:flex-start;gap:20px;margin:8px 3px 0;padding-top:12px;border-top:1px solid rgba(255,255,255,.065);font-size:10px;color:#929baa}
+.curve-wrap.premium-forecast .curve-legend .leg-real{height:2px!important;background:#d8bd87!important;box-shadow:none!important}
+.curve-wrap.premium-forecast .curve-legend .leg-forecast{height:0!important;border:0!important;border-top:2px dashed #ead7ad!important;box-shadow:none!important}
+.curve-wrap.premium-forecast .curve-tooltip{background:rgba(255,255,255,.025);border-color:rgba(216,189,135,.16);box-shadow:none}
+:root[data-theme="light"] .curve-wrap.premium-forecast{background:linear-gradient(155deg,#fff 0%,#fcfbf8 100%);border-color:#e7dfd1;box-shadow:0 14px 36px rgba(61,48,27,.055),inset 0 1px #fff}
+:root[data-theme="light"] .curve-wrap.premium-forecast .curve-period{color:#737b87}
+:root[data-theme="light"] .curve-wrap.premium-forecast .curve-status{background:#f8f4eb;border-color:#e9dfcc;color:#947443}
+:root[data-theme="light"] .curve-wrap.premium-forecast .curve-legend{border-color:#eee8dd;color:#737b87}
+@media(max-width:650px){.curve-wrap.premium-forecast{padding:16px 11px 13px}.curve-wrap.premium-forecast .curve-svg{min-height:195px}.curve-wrap.premium-forecast .curve-legend{gap:12px 16px}}
 </style>
 
 <style id="light-mode-contrast-fix">
@@ -2283,13 +2302,13 @@ function bal(big){
  for(let d=1;d<=td;d++){balance+=net[d];P.push({d,v:r2(balance)})}
  const current=r2(T.rest),spentPerDay=td?T.dep/td:0,
  proj=r2(current-spentPerDay*(D-td)),end=start-T.bud;
- const ideal=d=>start-T.bud*d/D,all=[...P.map(p=>p.v),proj,end,current];
+ const all=[...P.map(p=>p.v),proj,current];
  let lo=Math.min(...all),hi=Math.max(...all);
  if(hi===lo){hi+=1;lo-=1}
  const pad=Math.max((hi-lo)*.16,Math.max(1,Math.abs(hi)*.025));lo-=pad;hi+=pad;
  const W=700,H=big?300:246,L=72,R=20,Tp=22,B=36,
  X=d=>L+(W-L-R)*d/D,Y=v=>Tp+(H-Tp-B)*(1-(v-lo)/(hi-lo)),bs=H-B;
- const good=current>=ideal(td),col='#d8bd87',light='#ead7ad';
+ const col='#d8bd87',light='#ead7ad';
  const pts=P.map(p=>({x:X(p.d),y:Y(p.v)}));
  const line=pts.length===1?'M'+pts[0].x+' '+pts[0].y:pts.slice(0,-1).map((p,i)=>{
   const p0=pts[Math.max(0,i-1)],p1=p,p2=pts[i+1],p3=pts[Math.min(pts.length-1,i+2)];
@@ -2297,8 +2316,6 @@ function bal(big){
   return(i===0?'M'+p1.x.toFixed(2)+' '+p1.y.toFixed(2):'')+' C'+c1.x.toFixed(2)+' '+c1.y.toFixed(2)+' '+c2.x.toFixed(2)+' '+c2.y.toFixed(2)+' '+p2.x.toFixed(2)+' '+p2.y.toFixed(2);
  }).join(' ');
  const area=line+' L'+X(td).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
- const idealLine='M'+X(0).toFixed(2)+' '+Y(start).toFixed(2)+' L'+X(D).toFixed(2)+' '+Y(end).toFixed(2);
- const idealArea=idealLine+' L'+X(D).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
  const fmt=v=>new Intl.NumberFormat('fr-FR',{notation:'compact',maximumFractionDigits:1}).format(v)+' €';
  const grid=Array.from({length:5},(_,i)=>{const v=hi-(hi-lo)*i/4,yy=Y(v);return'<line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="var(--mu)" stroke-opacity="'+(i===4?'.24':'.10')+'"/><text x="'+(L-12)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="var(--mu)" opacity=".9">'+fmt(v)+'</text>'}).join('');
  const days=[...new Set([1,5,10,15,20,25,D].filter(d=>d<=D))];
@@ -2310,12 +2327,10 @@ function bal(big){
  const summary=big?'<div class="stat curve-stats"><div><small>Disponible actuel</small><b>'+eur(current)+'</b></div><div><small>Fin de mois estimée</small><b class="'+cls(proj)+'">'+eur(proj)+'</b></div><div><small>Dépenses moyennes / jour</small><b>'+eur(spentPerDay)+'</b></div><div><small>Jours restants</small><b>'+dayLeft+'</b></div></div>':'';
  const html=summary+
  '<div class="curve-wrap premium-forecast">'+
- '<div class="curve-topline"><span class="curve-period">'+mn+' '+y+'</span><span class="curve-status"><i style="background:'+col+'"></i>'+(good?'Dans le rythme':'À surveiller')+'</span></div>'+
+ '<div class="curve-topline"><span class="curve-period">Évolution du solde · '+mn+' '+y+'</span><span class="curve-status"><i style="background:'+col+'"></i>Patrimoine disponible</span></div>'+
  '<div class="curve-chart-shell"><svg id="cs" class="curve-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" tabindex="0" aria-label="Graphique du disponible budgétaire : historique réel jusqu’à aujourd’hui et estimation jusqu’à la fin du mois. Utilise les flèches gauche et droite pour parcourir les jours.">'+
  '<defs>'+
  '<linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity=".13"/><stop offset="100%" stop-color="'+col+'" stop-opacity="0"/></linearGradient>'+
- '<linearGradient id="curveIdealArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#aeb4bf" stop-opacity=".055"/><stop offset="100%" stop-color="#aeb4bf" stop-opacity="0"/></linearGradient>'+
- '<linearGradient id="curveIdealStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#8d96a5"/><stop offset="100%" stop-color="#aeb5c0"/></linearGradient>'+
  '<linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="100%" stop-color="'+col+'"/></linearGradient>'+
  '<filter id="curveGlow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="1.8" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>'+
  '</defs>'+grid+
@@ -2332,7 +2347,7 @@ function bal(big){
  '<circle cx="'+projectX.toFixed(2)+'" cy="'+projectY.toFixed(2)+'" r="3.8" fill="'+light+'" stroke="var(--cd)" stroke-width="1.8"/>'+
  xl+'<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
  '</svg></div>'+
- '<div class="curve-legend" aria-label="Légende du graphique"><span><i class="leg-real"></i>Évolution réelle</span><span><i class="leg-ideal"></i>Objectif budgétaire</span><span><i class="leg-forecast"></i>Projection</span></div>'+
+ '<div class="curve-legend" aria-label="Légende du graphique"><span><i class="leg-real"></i>Solde enregistré</span><span><i class="leg-forecast"></i>Estimation de fin de mois</span></div>'+
  '<p class="curve-footnote">Historique calculé à partir de tes transactions enregistrées. La prévision prolonge le rythme moyen de dépenses du mois ; elle ne garantit pas le solde bancaire réel.</p>'+
  '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip" aria-live="polite"></div>';
  AF.push(()=>{
@@ -2340,8 +2355,8 @@ function bal(big){
   let selected=td;
   const show=d=>{
    selected=Math.max(0,Math.min(td,d));
-   const p=P[selected],diff=p.v-ideal(selected),date=selected?selected+' '+mn:'Début du mois',items=ev[selected];
-   ci.innerHTML='<div class="curve-tip-date">'+date+'</div><div class="curve-tip-values"><div><small>Disponible</small><b>'+eur(p.v)+'</b></div><div><small>Cible</small><b>'+eur(ideal(selected))+'</b></div><div><small>Écart</small><b class="'+cls(diff)+'">'+(diff>=0?'+':'')+eur(diff)+'</b></div></div>'+
+   const p=P[selected],diff=p.v-start,date=selected?selected+' '+mn:'Début du mois',items=ev[selected];
+   ci.innerHTML='<div class="curve-tip-date">'+date+'</div><div class="curve-tip-values"><div><small>Solde disponible</small><b>'+eur(p.v)+'</b></div><div><small>Évolution depuis le début</small><b class="'+cls(diff)+'">'+(diff>=0?'+':'')+eur(diff)+'</b></div></div>'+
     (items.length?'<div class="curve-tip-events">'+items.map(e=>'<span>'+esc(e.desc||e.label)+' · '+(e.k==='rev'?'+':'−')+eur(Math.abs(Number(e.amt)||0))+'</span>').join('')+'</div>':'<div class="curve-tip-empty">Aucune transaction enregistrée ce jour-là</div>');
    const x=X(selected),yy=Y(p.v),guide=$('todayGuide'),dot=$('todayDot'),halo=$('todayHalo');
    if(guide){guide.setAttribute('x1',x);guide.setAttribute('x2',x)}
