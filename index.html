@@ -1029,6 +1029,18 @@ input:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid 
 :root[data-theme=light] .curve-wrap.finary-curve{background:linear-gradient(180deg,#0b0b0b,#11100e);border-color:rgba(201,169,120,.18);color:#f5f3ee}
 @media(max-width:650px){.curve-wrap.finary-curve{padding:15px 10px 11px}.finary-total{font-size:26px}.curve-wrap.finary-curve .curve-chart-shell,.curve-wrap.finary-curve .curve-svg{min-height:205px}}
 
+.curve-wrap.finary-curve .finary-head{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin-bottom:5px}
+.curve-wrap.finary-curve .finary-title{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted,#a59b8c);text-align:center}
+.curve-wrap.finary-curve .finary-change,.curve-wrap.finary-curve .finary-change-right{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums}
+.curve-wrap.finary-curve .finary-change-right{text-align:right}
+.curve-wrap.finary-curve .finary-change small{display:block;font-size:10px;font-weight:450;color:var(--muted,#a59b8c);margin-top:2px}
+.curve-wrap.finary-curve .finary-total{font-size:clamp(25px,4vw,34px);font-weight:650;letter-spacing:-.045em;font-variant-numeric:tabular-nums;margin:5px 0 2px}
+.curve-wrap.finary-curve .curve-chart-shell{padding:8px 0 0}
+.curve-wrap.finary-curve .curve-svg{overflow:visible;touch-action:pan-y}
+.curve-wrap.finary-curve .curve-svg .curve-line{filter:drop-shadow(0 2px 5px rgba(215,183,127,.22))}
+.curve-wrap.finary-curve .curve-svg .curve-fill{opacity:.95}
+.curve-wrap.finary-curve .curve-legend{font-size:10px;letter-spacing:.02em}
+@media(max-width:520px){.curve-wrap.finary-curve .finary-head{gap:5px}.curve-wrap.finary-curve .finary-title{font-size:9px;letter-spacing:.06em}.curve-wrap.finary-curve .finary-change,.curve-wrap.finary-curve .finary-change-right{font-size:10px}.curve-wrap.finary-curve .finary-total{font-size:27px}}
 </style>
 
 <style id="light-mode-contrast-fix">
@@ -2320,10 +2332,15 @@ function bal(big){
   const amount=Number(e.amt)||0,impact=e.k==='rev'?amount:-amount;
   net[day]+=impact;ev[day].push(e);
  }
- const netTotal=net.slice(1,td+1).reduce((a,v)=>a+v,0);
- const start=r2(current-netTotal),P=[{d:0,v:start}];let balance=start;
+ const monthStart=new Date(y,mo,1).getTime(),base=Number(active?.base)||0;
+ const signed=e=>(e.k==='rev'?1:-1)*(Number(e.amt)||0);
+ const prior=logs.reduce((sum,e)=>{
+  const stamp=Number(e.t)||Number(e.createdAt)||0;
+  return stamp>0&&stamp<monthStart?sum+signed(e):sum;
+ },0);
+ const start=r2(base+prior),P=[{d:0,v:start}];let balance=start;
  for(let d=1;d<=td;d++){balance+=net[d];P.push({d,v:r2(balance)})}
- const change=r2(current-start),pct=start?change/Math.abs(start)*100:0;
+ const chartCurrent=r2(balance),change=r2(chartCurrent-start),pct=start?change/Math.abs(start)*100:0;
  const spentPerDay=td?T.dep/td:0,proj=r2(current-spentPerDay*(D-td)),dayLeft=Math.max(0,D-td);
  const all=P.map(p=>p.v);let lo=Math.min(...all),hi=Math.max(...all);
  if(hi===lo){const scale=Math.max(10,Math.abs(hi)*.015);hi+=scale;lo-=scale}
@@ -2342,14 +2359,14 @@ function bal(big){
  const grid=Array.from({length:4},(_,i)=>{const v=hi-(hi-lo)*i/3,yy=Y(v);return'<g><line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="#c9b99d" stroke-opacity="'+(i===3?'.17':'.09')+'" stroke-width="1"/><text x="'+(L-10)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="#a59b8c">'+fmt(v)+'</text></g>'}).join('');
  const days=[...new Set([1,Math.max(1,Math.round(D/3)),Math.max(1,Math.round(D*2/3)),D].filter(d=>d<=D))];
  const xl=days.map(d=>'<text x="'+X(d).toFixed(2)+'" y="'+(H-10)+'" text-anchor="'+(d===1?'start':d===D?'end':'middle')+'" font-size="11" fill="#a59b8c">'+(d===1?'1 '+mn.slice(0,3):d+' '+mn.slice(0,3))+'</text>').join('');
- const todayX=X(td),actualY=Y(current),title=active?'Solde du compte · '+esc(active.name||'Compte bancaire'):'Disponible prévisionnel';
+ const todayX=X(td),actualY=Y(chartCurrent),title=active?'Solde du compte · '+esc(active.name||'Compte bancaire'):'Disponible prévisionnel';
  const summary=big?'<div class="stat curve-stats"><div><small>Solde bancaire actuel</small><b>'+eur(current)+'</b></div><div><small>Variation du mois</small><b class="'+cls(change)+'">'+(change>=0?'+':'')+eur(change)+'</b></div><div><small>Dépenses moyennes / jour</small><b>'+eur(spentPerDay)+'</b></div><div><small>Jours restants</small><b>'+dayLeft+'</b></div></div>':'';
  const html=summary+
  '<div class="curve-wrap premium-forecast finary-curve">'+
  '<div class="finary-head"><div class="finary-change '+(change>=0?'pos':'neg')+'">'+(change>=0?'+':'')+eur(change)+' <small>ce mois-ci</small></div><div class="finary-title">Évolution du patrimoine</div><div class="finary-change-right '+(change>=0?'pos':'neg')+'">'+(change>=0?'+':'')+pct.toFixed(1).replace('.',',')+' %</div></div>'+
- '<div class="finary-total">'+eur(current)+'</div>'+
+ '<div class="finary-total">'+eur(chartCurrent)+'</div>'+
  '<div class="curve-period finary-period">'+esc(title)+' · '+mn+' '+y+'</div>'+
- '<div class="curve-chart-shell"><svg id="cs" class="curve-svg finary-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" tabindex="0" aria-label="Évolution réelle du solde du compte à partir des transactions enregistrées. Utilise les flèches gauche et droite pour parcourir les jours.">'+
+ '<div class="curve-chart-shell"><svg id="cs" class="curve-svg finary-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" tabindex="0" aria-label="Historique quotidien du solde bancaire reconstitué depuis le solde initial et les transactions enregistrées.">'+
  '<defs><linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity=".34"/><stop offset="68%" stop-color="'+col+'" stop-opacity=".12"/><stop offset="100%" stop-color="'+col+'" stop-opacity=".01"/></linearGradient><linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="100%" stop-color="'+col+'"/></linearGradient></defs>'+
  grid+'<path class="curve-fill" d="'+area+'" fill="url(#curveArea)"/>'+
  '<line id="curveCrosshair" x1="'+todayX.toFixed(2)+'" y1="'+Tp+'" x2="'+todayX.toFixed(2)+'" y2="'+bs+'" stroke="'+light+'" stroke-opacity=".42" stroke-width="1" stroke-dasharray="3 5"/>'+
