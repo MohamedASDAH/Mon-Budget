@@ -1554,35 +1554,61 @@ button.g,.mb,.th{background:rgba(255,255,255,.045);border:1px solid rgba(201,170
 :root[data-theme="light"] #pg :is(.toast,.modal,.pop,.dropdown,.menu,.select-menu){color:#202a3a}
 :root[data-theme="light"] #pg svg text{fill:currentColor}
 
-/* Bouton de renommage du compte : plus grand et facile à toucher */
-.account-manage button:not(.danger){
- flex:0 0 100%;
- width:100%;
- min-height:48px;
- padding:13px 18px;
- font-size:14px;
- font-weight:700;
- border-radius:12px;
- letter-spacing:.1px;
+/* Gestion du compte : champs compacts et alignés */
+.account-manage{
+ display:flex!important;
+ flex-wrap:wrap!important;
+ align-items:center!important;
+ gap:8px!important;
+ padding:0 12px 12px!important;
+}
+.account-manage label[for="accountNameEdit"]{
+ flex:0 0 100%!important;
+ width:100%!important;
+ margin:0!important;
 }
 .account-manage input#accountNameEdit{
  display:block!important;
- flex:0 1 280px!important;
- width:100%!important;
- max-width:280px!important;
- min-width:0!important;
- height:44px!important;
- min-height:44px!important;
- padding:10px 13px!important;
- font-size:14px!important;
+ flex:0 1 210px!important;
+ width:210px!important;
+ max-width:100%!important;
+ min-width:130px!important;
+ height:38px!important;
+ min-height:38px!important;
+ padding:8px 11px!important;
+ font-size:13px!important;
  line-height:20px!important;
- color:#f5f0df!important;
- background:#080808!important;
- border:1px solid #c6a96b88!important;
- border-radius:10px!important;
  box-sizing:border-box!important;
 }
-.account-manage{gap:10px}
+.account-manage button:not(.danger){
+ flex:0 0 auto!important;
+ width:auto!important;
+ min-height:36px!important;
+ padding:8px 12px!important;
+ font-size:12px!important;
+ font-weight:600!important;
+ border-radius:9px!important;
+ letter-spacing:0!important;
+}
+.account-manage select{
+ flex:0 0 100%!important;
+ width:100%!important;
+ min-width:0!important;
+ min-height:38px!important;
+}
+.account-manage .danger{
+ flex:0 0 auto!important;
+ width:auto!important;
+ min-height:34px!important;
+ padding:7px 11px!important;
+ font-size:12px!important;
+}
+@media(max-width:480px){
+ .account-manage input#accountNameEdit{
+  flex:1 1 145px!important;
+  width:auto!important;
+ }
+}
 </style>
 </head>
 <body>
