@@ -2342,7 +2342,25 @@ function bal(big){
  for(let d=1;d<=td;d++){balance+=net[d];P.push({d,v:r2(balance)})}
  const chartCurrent=r2(balance),change=r2(chartCurrent-start),pct=start?change/Math.abs(start)*100:0;
  const spentPerDay=td?T.dep/td:0,proj=r2(current-spentPerDay*(D-td)),dayLeft=Math.max(0,D-td);
- const all=P.map(p=>p.v);let lo=Math.min(...all),hi=Math.max(...all);
+ const accounts=(S.accounts||[]).filter(a=>a&&a.id);
+ const palette=['#d7b77f','#80a9c8','#9bc49a','#c49bd1','#d58f83','#9fb6a4'];
+ const series=accounts.map((a,index)=>{
+  const sinceAt=Number(a.since)||0,opening=Number(a.base)||0,byDay=Array(D+1).fill(0);
+  const accountLogs=(S.log||[]).filter(e=>(e.accountId||accounts[0]?.id)===a.id&&(!sinceAt||Number(e.createdAt||0)>=sinceAt));
+  for(const e of accountLogs){
+   const stamp=Number(e.t)||Number(e.createdAt)||0,dt=new Date(stamp);
+   if(!Number.isFinite(dt.getTime())||dt.getFullYear()!==y||dt.getMonth()!==mo||dt.getDate()>td)continue;
+   byDay[dt.getDate()]+=(e.k==='rev'?1:-1)*(Number(e.amt)||0);
+  }
+  const values=Array(D+1).fill(null);
+  const sd=sinceAt?new Date(sinceAt):null;
+  const startDay=sd&&sd.getFullYear()===y&&sd.getMonth()===mo?sd.getDate():0;
+  let v=opening;values[startDay]=r2(v);
+  for(let d=Math.max(1,startDay+1);d<=td;d++){v+=byDay[d];values[d]=r2(v)}
+  if(startDay===0){v=opening;for(let d=1;d<=td;d++){v+=byDay[d];values[d]=r2(v)}}
+  return{account:a,index,color:palette[index%palette.length],values};
+ }).filter(z=>z.values.some(v=>v!==null));
+ const all=[...P.map(p=>p.v),...series.flatMap(z=>z.values.filter(v=>v!==null))];let lo=Math.min(...all),hi=Math.max(...all);
  if(hi===lo){const scale=Math.max(10,Math.abs(hi)*.015);hi+=scale;lo-=scale}
  const pad=Math.max((hi-lo)*.2,Math.max(1,Math.abs(hi)*.012));lo-=pad;hi+=pad;
  const W=700,H=big?350:330,L=78,R=18,Tp=20,B=38,
@@ -2355,6 +2373,17 @@ function bal(big){
   return(i===0?'M'+p1.x.toFixed(2)+' '+p1.y.toFixed(2):'')+' C'+c1.x.toFixed(2)+' '+c1.y.toFixed(2)+' '+c2.x.toFixed(2)+' '+c2.y.toFixed(2)+' '+p2.x.toFixed(2)+' '+p2.y.toFixed(2);
  }).join(' ');
  const area=line+' L'+X(td).toFixed(2)+' '+bs+' L'+X(0).toFixed(2)+' '+bs+' Z';
+ const makePath=values=>{
+  const points=values.map((v,d)=>v===null?null:{x:X(d),y:Y(v)}).filter(Boolean);
+  if(!points.length)return'';
+  return points.slice(0,-1).map((p,i)=>{
+   const q=points[i+1],p0=points[Math.max(0,i-1)],p3=points[Math.min(points.length-1,i+2)];
+   const c1={x:p.x+(q.x-p0.x)/6,y:p.y+(q.y-p0.y)/6},c2={x:q.x-(p3.x-p.x)/6,y:q.y-(p3.y-p.y)/6};
+   return(i===0?'M'+p.x.toFixed(2)+' '+p.y.toFixed(2):'')+' C'+c1.x.toFixed(2)+' '+c1.y.toFixed(2)+' '+c2.x.toFixed(2)+' '+c2.y.toFixed(2)+' '+q.x.toFixed(2)+' '+q.y.toFixed(2);
+  }).join(' ');
+ };
+ const otherLines=series.filter(z=>z.account.id!==active?.id).map(z=>'<path d="'+makePath(z.values)+'" fill="none" stroke="'+z.color+'" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/>').join('');
+ const legend=series.map(z=>'<span style="display:inline-flex;align-items:center;gap:6px;margin:3px 12px 3px 0;white-space:nowrap"><i style="display:inline-block;width:17px;height:2px;border-radius:2px;background:'+z.color+'"></i>'+esc(z.account.name||'Compte')+'</span>').join('');
  const fmt=v=>new Intl.NumberFormat('fr-FR',{maximumFractionDigits:0,notation:Math.abs(v)>=10000?'compact':'standard'}).format(v)+' €';
  const grid=Array.from({length:4},(_,i)=>{const v=hi-(hi-lo)*i/3,yy=Y(v);return'<g><line x1="'+L+'" y1="'+yy.toFixed(2)+'" x2="'+(W-R)+'" y2="'+yy.toFixed(2)+'" stroke="#c9b99d" stroke-opacity="'+(i===3?'.17':'.09')+'" stroke-width="1"/><text x="'+(L-10)+'" y="'+(yy+4).toFixed(2)+'" text-anchor="end" font-size="10" fill="#a59b8c">'+fmt(v)+'</text></g>'}).join('');
  const days=[...new Set([1,Math.max(1,Math.round(D/3)),Math.max(1,Math.round(D*2/3)),D].filter(d=>d<=D))];
@@ -2368,14 +2397,14 @@ function bal(big){
  '<div class="curve-period finary-period">'+esc(title)+' · '+mn+' '+y+'</div>'+
  '<div class="curve-chart-shell"><svg id="cs" class="curve-svg finary-svg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" role="img" tabindex="0" aria-label="Historique quotidien du solde bancaire reconstitué depuis le solde initial et les transactions enregistrées.">'+
  '<defs><linearGradient id="curveArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+col+'" stop-opacity=".34"/><stop offset="68%" stop-color="'+col+'" stop-opacity=".12"/><stop offset="100%" stop-color="'+col+'" stop-opacity=".01"/></linearGradient><linearGradient id="curveStroke" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="'+light+'"/><stop offset="100%" stop-color="'+col+'"/></linearGradient></defs>'+
- grid+'<path class="curve-fill" d="'+area+'" fill="url(#curveArea)"/>'+
+ grid+'<path class="curve-fill" d="'+area+'" fill="url(#curveArea)"/>'+otherLines+
  '<line id="curveCrosshair" x1="'+todayX.toFixed(2)+'" y1="'+Tp+'" x2="'+todayX.toFixed(2)+'" y2="'+bs+'" stroke="'+light+'" stroke-opacity=".42" stroke-width="1" stroke-dasharray="3 5"/>'+
  '<path d="'+line+'" class="curve-line" fill="none" stroke="url(#curveStroke)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'+
  '<circle id="todayHalo" cx="'+todayX.toFixed(2)+'" cy="'+actualY.toFixed(2)+'" r="9" fill="'+col+'" opacity=".18"/>'+
  '<circle id="todayDot" cx="'+todayX.toFixed(2)+'" cy="'+actualY.toFixed(2)+'" r="3.8" fill="'+light+'" stroke="#17130d" stroke-width="1.5"/>'+
  xl+'<rect x="'+L+'" y="'+Tp+'" width="'+(W-L-R)+'" height="'+(bs-Tp)+'" fill="transparent" class="curve-hit"/>'+
  '</svg></div>'+
- '<div class="curve-legend finary-legend"><span><i class="leg-real"></i>Solde réel enregistré</span></div>'+
+ '<div class="curve-legend finary-legend">'+legend+'</div>'+
  '<p class="curve-footnote">Courbe calculée à partir du solde du compte sélectionné et de ses transactions enregistrées. Les jours sans opération conservent le dernier solde connu.</p>'+
  '</div><div id="ci'+(big?'':'x')+'" class="curve-tooltip" aria-live="polite"></div>';
  AF.push(()=>{
